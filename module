@@ -1,0 +1,71 @@
+#!/usr/bin/perl
+use lib qw(lib);
+use strict;
+use warnings;
+use Android::Gradle;
+use Path;
+use Android::Module;
+
+my $opt_a;
+
+while (@ARGV) {
+    local $_ = shift @ARGV;
+    if ($_ eq '-h' || $_ eq '--help') {
+        usage();
+        exit(0);
+    }elsif($_ eq '-a'){
+        $opt_a = $_;
+    }elsif($_ eq '--manifest'){
+        my $mod = shift @ARGV;
+        if(!$mod){
+           usage();
+           exit(0);
+        }
+
+        manifest_activities($mod);
+
+        exit(0);
+    }elsif (/^-./) {
+        print STDERR "Unknown option: $_\n";
+        usage();
+        exit(0);
+    }
+}
+
+sub usage{
+    print "Usage:\n";
+    print "  module [option] \n";
+    print "  Options: -a                   #list android modules\n";
+    print "           --manifest <module>  #list module manifest activities\n";
+}
+
+sub manifest_activities{
+    my $module =  shift;
+
+    my $root = new Path()->parent;
+
+    my $manifest = new Manifest($root, $module);
+
+    $manifest->activities;
+}
+
+
+my $root = new Path()->parent;
+my $gradle = new Gradle($root);
+
+my @modules = $gradle->modules;
+foreach(@modules){
+    if($opt_a){
+        if( ($gradle->is_android($_))){
+            print;
+            print "\n";
+            next;
+        }
+
+        next;
+    }
+
+    print;
+    print "\n";
+}
+

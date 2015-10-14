@@ -1,0 +1,24 @@
+{
+  "module": "app",
+  "target": "activity_option_smart.xml",
+  "span": 10,
+  "groups": [
+    {
+      "name": null,
+      "items": [
+        {
+          "title": "单页测试",
+          "id": "R.id.action_option_unittest"
+        },
+        {
+          "title": "基础数据",
+          "id": "R.id.action_option_data"
+        },
+        {
+          "title": "APP",
+          "id": "R.id.action_option_app"
+        }
+      ]
+    }
+  ]
+}

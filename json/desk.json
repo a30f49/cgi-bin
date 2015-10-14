@@ -1,0 +1,39 @@
+{
+  "test": "cqd",
+  "domain": {
+    "package:": "com.jfeat.apps.quandian.domain.model.Desk",
+    "src": "domain.src.main.java"
+  },
+  "target": {
+    "package": "com.jfeat.apps.quandian.module.admin.app",
+    "src": "src.main.java",
+    "res": "src.main.res",
+    "module_name": "admin",
+    "model_name": "asset"
+  },
+  "xml": [
+    {
+      "type": "list.item",
+      "template": "template_list_item_medium.xml",
+      "fields": [
+        {
+          "name": "android.R.id.text1"
+        },
+        {
+          "size": "android.R.id.text2",
+          "format": "R.string.desk_size_format"
+        },
+        {
+          "status": "R.id.status",
+          "string_array": "R.array.desk_status_array"
+        }
+      ]
+    },
+    {
+      "type":"list.show"
+    },
+    {
+      "type":"list.new"
+    }
+  ]
+}
