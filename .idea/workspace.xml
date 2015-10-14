@@ -1,0 +1,403 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="411dbfd4-b76c-4f10-8532-5bafdf10a3f0" name="Default" comment="" />
+    <ignored path="cgi-bin.iws" />
+    <ignored path=".idea/workspace.xml" />
+    <ignored path="$PROJECT_DIR$/out/" />
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="TRACKING_ENABLED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ChangesViewManager" flattened_view="true" show_ignored="false" />
+  <component name="CreatePatchCommitExecutor">
+    <option name="PATCH_PATH" value="" />
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
+  <component name="FavoritesManager">
+    <favorites_list name="cgi-bin" />
+  </component>
+  <component name="FileEditorManager">
+    <leaf>
+      <file leaf-file-name="gen_json" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/gen_json">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="1.5739911">
+              <caret line="52" column="0" selection-start-line="52" selection-start-column="0" selection-end-line="52" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="GradleLocalSettings">
+    <option name="modificationStamps">
+      <map>
+        <entry key="$USER_HOME$/Desktop/CircleImageView" value="5764222170838" />
+        <entry key="$USER_HOME$/Desktop/CircleImageView/plugin-circle-image-view" value="5763451502605" />
+        <entry key="$USER_HOME$/Desktop/client" value="7175868139899" />
+        <entry key="D:/aliyun.com/AndroBluetooth" value="1434701666936" />
+        <entry key="D:/aliyun.com/apps/plugin-widget-contentlayout-demo" value="4309643705969" />
+        <entry key="D:/aliyun.com/apps/plugin-widget-demo" value="4295187037644" />
+        <entry key="D:/aliyun.com/custom/ContentLayout" value="5725880970718" />
+        <entry key="D:/aliyun.com/custom/PagerSlidingTabStrip" value="1433142456026" />
+        <entry key="D:/aliyun.com/demo/AccelerateSample" value="1434942810579" />
+        <entry key="D:/aliyun.com/demo/LoadingErrorSample" value="1426664468557" />
+        <entry key="D:/aliyun.com/osp" value="5736705770029" />
+        <entry key="D:/aliyun.com/plugins/plugin-anutil" value="7165929114407" />
+        <entry key="D:/aliyun.com/plugins/plugin-api" value="1441879754626" />
+        <entry key="D:/aliyun.com/plugins/plugin-api-factory" value="1441877487581" />
+        <entry key="D:/aliyun.com/plugins/plugin-app-loader" value="1443414018864" />
+        <entry key="D:/aliyun.com/plugins/plugin-flow" value="1441935981180" />
+        <entry key="D:/aliyun.com/plugins/plugin-json" value="1431959934313" />
+        <entry key="D:/aliyun.com/plugins/plugin-lang" value="1439176819845" />
+        <entry key="D:/aliyun.com/plugins/plugin-loader" value="1441877657347" />
+        <entry key="D:/aliyun.com/plugins/plugin-loading" value="1441877699122" />
+        <entry key="D:/aliyun.com/plugins/plugin-mqtt" value="1434587850838" />
+        <entry key="D:/aliyun.com/plugins/plugin-rest" value="1435195395469" />
+        <entry key="D:/aliyun.com/plugins/plugin-util" value="1433227679724" />
+        <entry key="D:/aliyun.com/plugins/plugin-widget-contentlayout" value="1434624896864" />
+        <entry key="D:/aliyun.com/plugins/plugin-widget-pagerslidingtabstrip" value="1440660359165" />
+        <entry key="D:/aliyun.com/plugins/plugin-widget-recyclerviewextension" value="1440659058654" />
+        <entry key="D:/aliyun.com/plugins/plugin-widget-simple" value="1426575695493" />
+        <entry key="D:/aliyun.com/plugins/plugin-widget-slidinguppanellayout" value="1440661700648" />
+        <entry key="D:/aliyun.com/plugins/plugin-widget-togglebutton" value="1440661343163" />
+        <entry key="D:/aliyun.com/plugins/plugin-widget-wraplayout" value="1440660725349" />
+        <entry key="D:/aliyun.com/plugins/plugin-widgets" value="1440662207559" />
+        <entry key="D:/aliyun.com/qcs/backing" value="8629731872892" />
+        <entry key="D:/aliyun.com/qcs/domain" value="1434334383657" />
+        <entry key="D:/aliyun.com/qcs/module-handset" value="10072622488209" />
+        <entry key="D:/aliyun.com/qcs/module-tts" value="4301266373998" />
+        <entry key="D:/aliyun.com/qcs/module-tv" value="5744419353792" />
+        <entry key="D:/aliyun.com/qcs/printer" value="5706334553838" />
+        <entry key="D:/aliyun.com/qcs/queueprovider" value="10065096432709" />
+        <entry key="D:/aliyun.com/qcs/session" value="1434334622752" />
+        <entry key="D:/aliyun.com/quandian/cn.com.PadServerMaShangChi-1" value="1444644429536" />
+        <entry key="D:/aliyun.com/quandian/pack" value="20201232576536" />
+        <entry key="D:/aliyun.com/quandian/pack-admin" value="10099155467747" />
+        <entry key="D:/aliyun.com/quandian/repo/WizardPager" value="7215805919482" />
+        <entry key="D:/dianjiang/dj/client" value="7176860463482" />
+        <entry key="D:/dianjiang/dj/domain" value="1435193813036" />
+        <entry key="D:/dianjiang/dj/domain-business" value="1440065368027" />
+        <entry key="D:/dianjiang/dj/domain-common" value="1440064379040" />
+        <entry key="D:/dianjiang/dj/domain-user" value="1440065521126" />
+        <entry key="D:/dianjiang/dj/module-client" value="7176867701460" />
+        <entry key="D:/dianjiang/dj/module-coupon" value="8612882262756" />
+        <entry key="D:/dianjiang/dj/module-my-pack" value="11492735375628" />
+        <entry key="D:/dianjiang/dj/module-recruit" value="10051803789348" />
+        <entry key="D:/dianjiang/dj/module-recruitment" value="8612882262756" />
+        <entry key="D:/dianjiang/dj/module-register" value="8612882262756" />
+        <entry key="D:/dianjiang/dj/module-ticket" value="8612882262756" />
+        <entry key="D:/dianjiang/dj/pack" value="21594702139190" />
+        <entry key="D:/dianjiang/dj/pack-user" value="23032045650512" />
+        <entry key="D:/dianjiang/dj/plugin-api-register" value="1439781232252" />
+        <entry key="D:/dianjiang/dj/plugins/plugin-api" value="1437095380769" />
+        <entry key="D:/dianjiang/dj/plugins/plugin-api-factory" value="1437095380741" />
+        <entry key="D:/dianjiang/dj/plugins/plugin-api-runtime" value="1435370354627" />
+        <entry key="D:/dianjiang/dj/plugins/plugin-app" value="1437095380770" />
+        <entry key="D:/dianjiang/dj/plugins/plugin-app-loader" value="1438231621275" />
+        <entry key="D:/dianjiang/dj/plugins/plugin-banner" value="1435479054619" />
+        <entry key="D:/dianjiang/dj/plugins/plugin-flow" value="1436602406953" />
+        <entry key="D:/dianjiang/dj/plugins/plugin-loader" value="1436603134060" />
+        <entry key="D:/dianjiang/dj/plugins/plugin-loading" value="1436602406959" />
+        <entry key="D:/dianjiang/dj/plugins/plugin-location" value="1437095380784" />
+        <entry key="D:/dianjiang/dj/plugins/plugin-refresh-loader" value="1438663947572" />
+        <entry key="D:/dianjiang/dj/plugins/plugin-widget-picker" value="1438856631305" />
+        <entry key="D:/dianjiang/dj/plugins/plugin-widget-pulltorefresh" value="1439433802515" />
+        <entry key="D:/dianjiang/dj/plugins/plugin-widget-switchbutton" value="1438419779497" />
+        <entry key="D:/dianjiang/repo/domain-business" value="1437469075676" />
+        <entry key="D:/dianjiang/repo/github.com/ExpandableListView" value="4314196299854" />
+        <entry key="D:/dianjiang/repo/pack" value="18689513480381" />
+        <entry key="D:/dianjiang/repo/pack-user" value="24459113572120" />
+        <entry key="D:/github.com/demo/acra" value="1437457985192" />
+        <entry key="D:/github.com/demo/actionbar" value="1427690417914" />
+        <entry key="D:/github.com/demo/listview" value="1437900004964" />
+        <entry key="D:/github.com/demo/picker" value="4315231576673" />
+        <entry key="D:/github.com/demo/popup" value="1437458007015" />
+        <entry key="D:/github.com/demo/switchbutton" value="5753618748450" />
+        <entry key="D:/github.com/demo/tts" value="1434681216607" />
+      </map>
+    </option>
+    <option name="externalProjectsViewState">
+      <projects_view />
+    </option>
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/lib/Android/GradleRoot.pm" />
+        <option value="$PROJECT_DIR$/act" />
+        <option value="$PROJECT_DIR$/module" />
+        <option value="$PROJECT_DIR$/gradle" />
+        <option value="$PROJECT_DIR$/gr" />
+        <option value="$PROJECT_DIR$/grad" />
+        <option value="$PROJECT_DIR$/lib/Android/Module.pm" />
+        <option value="$PROJECT_DIR$/mod" />
+        <option value="$PROJECT_DIR$/gen_json" />
+      </list>
+    </option>
+  </component>
+  <component name="NamedScopeManager">
+    <order />
+  </component>
+  <component name="ProjectFrameBounds">
+    <option name="x" value="-8" />
+    <option name="y" value="-8" />
+    <option name="width" value="1936" />
+    <option name="height" value="1056" />
+  </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="false">
+    <OptionsSetting value="true" id="Add" />
+    <OptionsSetting value="true" id="Remove" />
+    <OptionsSetting value="true" id="Checkout" />
+    <OptionsSetting value="true" id="Update" />
+    <OptionsSetting value="true" id="Status" />
+    <OptionsSetting value="true" id="Edit" />
+    <ConfirmationsSetting value="0" id="Add" />
+    <ConfirmationsSetting value="0" id="Remove" />
+  </component>
+  <component name="ProjectView">
+    <navigator currentView="ProjectPane" proportions="" version="1">
+      <flattenPackages />
+      <showMembers />
+      <showModules />
+      <showLibraryContents />
+      <hideEmptyPackages />
+      <abbreviatePackageNames />
+      <autoscrollToSource />
+      <autoscrollFromSource />
+      <sortByType />
+    </navigator>
+    <panes>
+      <pane id="PackagesPane" />
+      <pane id="ProjectPane">
+        <subPane>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="cgi-bin" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="cgi-bin" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="cgi-bin" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
+      <pane id="Scope" />
+      <pane id="Scratches" />
+    </panes>
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\vincent\cgi-bin" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration default="true" type="#org.jetbrains.idea.devkit.run.PluginConfigurationType" factoryName="Plugin">
+      <module name="" />
+      <option name="VM_PARAMETERS" value="-Xmx512m -Xms256m -XX:MaxPermSize=250m -ea" />
+      <option name="PROGRAM_PARAMETERS" />
+      <method />
+    </configuration>
+    <configuration default="true" type="Applet" factoryName="Applet">
+      <option name="WIDTH" value="400" />
+      <option name="HEIGHT" value="300" />
+      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
+      <module />
+      <method />
+    </configuration>
+    <configuration default="true" type="Application" factoryName="Application">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="VM_PARAMETERS" />
+      <option name="PROGRAM_PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="ENABLE_SWING_INSPECTOR" value="false" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <module name="" />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="true" type="JUnit" factoryName="JUnit">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+      <module name="" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PACKAGE_NAME" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="METHOD_NAME" />
+      <option name="TEST_OBJECT" value="class" />
+      <option name="VM_PARAMETERS" value="-ea" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="singleModule" />
+      </option>
+      <envs />
+      <patterns />
+      <method />
+    </configuration>
+    <configuration default="true" type="Remote" factoryName="Remote">
+      <option name="USE_SOCKET_TRANSPORT" value="true" />
+      <option name="SERVER_MODE" value="false" />
+      <option name="SHMEM_ADDRESS" value="javadebug" />
+      <option name="HOST" value="localhost" />
+      <option name="PORT" value="5005" />
+      <method />
+    </configuration>
+  </component>
+  <component name="ShelveChangesManager" show_recycled="false" />
+  <component name="ToolWindowManager">
+    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
+    <editor active="false" />
+    <layout>
+      <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="true" content_ui="tabs" />
+      <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="true" content_ui="tabs" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+    </layout>
+  </component>
+  <component name="VcsContentAnnotationSettings">
+    <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager />
+    <watches-manager />
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/fmt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="2" column="0" selection-start-line="2" selection-start-column="0" selection-end-line="6" selection-end-column="1" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/Android/Gradle.pm">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.1513453">
+          <caret line="17" column="1" selection-start-line="17" selection-start-column="1" selection-end-line="17" selection-end-column="1" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/Android/Manifest.pm">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/Path.pm">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/Android/Template.pm">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/Android/GradleRoot.pm">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.81726456">
+          <caret line="27" column="17" selection-start-line="27" selection-start-column="17" selection-end-line="27" selection-end-column="17" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sample/Module.pm">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.3632287">
+          <caret line="24" column="0" selection-start-line="24" selection-start-column="0" selection-end-line="24" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/Android/Module.pm">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.45515695">
+          <caret line="102" column="18" selection-start-line="102" selection-start-column="18" selection-end-line="102" selection-end-column="18" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/grad">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="33" column="2" selection-start-line="33" selection-start-column="2" selection-end-line="33" selection-end-column="2" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/mod">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="1.5134529">
+          <caret line="50" column="0" selection-start-line="50" selection-start-column="0" selection-end-line="50" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/act">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.3632287">
+          <caret line="12" column="10" selection-start-line="12" selection-start-column="10" selection-end-line="12" selection-end-column="10" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gen/act.pl">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.514574">
+          <caret line="17" column="0" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gen_json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="1.5739911">
+          <caret line="52" column="0" selection-start-line="52" selection-start-column="0" selection-end-line="52" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+  </component>
+</project>

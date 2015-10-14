@@ -1,0 +1,81 @@
+#!/usr/bin/perl
+BEGIN {
+    my $cwd = $0;
+    $cwd =~ s/\/\w+$//;
+    push( @INC, "$cwd/lib");
+}
+use strict;
+use warnings;
+
+use Path;
+
+use Android::Gradle;
+
+use Android::Module;
+
+my $ARGC = @ARGV;
+if($ARGC==0){
+    usage();
+    exit(0);
+}
+
+my $opt_a;
+while (@ARGV) {
+    local $_ = shift @ARGV;
+    if ($_ eq '-h' || $_ eq '--help') {
+        usage();
+        exit(0);
+    }elsif($_ eq '--root'){
+        $opt_a = $_;
+
+        my $is_an = shift;
+        if($is_an && $is_an eq '-a'){
+            list_android_modules();
+        }else{
+            list_modules();
+        }
+        exit(0);
+
+    }elsif (/^-./) {
+        print STDERR "Unknown option: $_\n";
+        usage();
+        exit(0);
+    }
+}
+
+sub usage{
+    print "Usage:\n";
+    print "  grad --root <-a>  \n";
+    print "     Options: --root       ## list project modules\n";
+    print "              -a           ## list only android modules\n";
+}
+
+sub list_modules{
+    my $gr = new GradleRoot();
+
+    my @modules = $gr->modules;
+    foreach(@modules){
+        print;
+        print "\n";
+    }
+}
+
+sub list_android_modules{
+    my $gr = new GradleRoot();
+    my @modules = $gr->modules;
+    foreach(@modules){
+        my $mod = $_;
+        my $mod_root = $gr->module_root($mod);
+
+        my $gradle = new Gradle($mod_root);
+
+        if($gradle->is_android){
+            print;
+            print "\n";
+        }
+    }
+}
+
+
+## show modules
+list_modules;

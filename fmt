@@ -1,0 +1,38 @@
+#!/usr/bin/perl
+#http://www.perlmonks.org/bare/?node_id=393773
+BEGIN {
+    my $cwd = $0;
+    $cwd =~ s/\/\w+$//;
+    push( @INC, "$cwd/lib");
+}
+use warnings;
+
+use XML::Smart;
+
+use File::Dir;
+
+use Android::Gradle;
+
+
+if( ! (-f 'build.gradle')){
+   print "Not an android root\n";
+   exit(0);
+}
+
+
+my $root = new Path()->path;
+my $gradle = new Gradle($root);
+my $res_path = $gradle->res;
+my $layout_path = "$root/$res_path/layout";
+#print $layout_path;
+my $dir = new Dir($layout_path);
+my @files = $dir->files;
+
+foreach(@files){
+    my $f = "$layout_path/$_";
+    print "$f\n";
+    my $XML = XML::Smart->new($f) ;
+    $XML->save($f);
+}
+
+print "Done\n";

@@ -1,5 +1,9 @@
 #!/usr/bin/perl
-use lib qw(lib);
+BEGIN {
+    my $cwd = $0;
+    $cwd =~ s/\/\w+$//;
+    push( @INC, "$cwd/lib");
+}
 use strict;
 use warnings;
 use Android::Gradle;
@@ -28,22 +32,12 @@ sub usage{
 
 }
 
-my $root = new Path()->parent;
-my $gradle = new Gradle($root);
+my $gr = new GradleRoot();
+my $gradle_root = $gr->root;
+my $gradle = new Gradle($gradle_root);
 
-my @modules = $gradle->modules;
-foreach(@modules){
-    if($opt_a){
-        if( ($gradle->is_android($_))){
-            print;
-            print "\n";
-            next;
-        }
+my $module_path = $
 
-        next;
-    }
 
-    print;
-    print "\n";
-}
+print "src :$src\n";
 

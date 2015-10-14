@@ -8,7 +8,8 @@ sub new{
         _root => undef
     };
 
-    $self->{_root} = new Path()->parent;
+    #$self->{_root} = new Path()->parent;
+    $self->{_root} = new Path()->path;
 
     bless $self, $class;
     return $self;

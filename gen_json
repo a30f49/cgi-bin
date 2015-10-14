@@ -1,0 +1,52 @@
+#!/usr/bin/perl
+BEGIN {
+    my $cwd = $0;
+    $cwd =~ s/\/\w+$//;
+    push( @INC, "$cwd/lib");
+}
+use strict;
+use warnings;
+
+use Path;
+
+use Android::Gradle;
+use Android::Module;
+
+my $ARGC = @ARGV;
+if($ARGC==0){
+    usage();
+    exit(0);
+}
+
+while (@ARGV) {
+    local $_ = shift @ARGV;
+    if ($_ eq '-h' || $_ eq '--help') {
+        usage();
+        exit(0);
+
+    }elsif($_ eq '-m'){
+        my $module_name = shift;
+
+        exit(0);
+    }elsif($_ eq '-p'){
+         my $package_name = shift;
+
+         exit(0);
+    }elsif($_ eq '-f'){
+          my $list_file = shift;
+
+          exit(0);
+    }elsif (/^-./) {
+        print STDERR "Unknown option: $_\n";
+        usage();
+        exit(0);
+    }
+}
+
+sub usage{
+    print "Usage:\n";
+    print "  gen_json -m <module> -p <package> -f <list-file>\n";
+    print "    options: -m <module>      #specific the target module name\n";
+    print "             -p <package>     #specific the target package\n";
+    print "             -f <list-file>   #specific the fragment list files\n";
+}
