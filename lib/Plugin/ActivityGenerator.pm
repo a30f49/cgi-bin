@@ -65,8 +65,26 @@ sub manifest_package{
 }
 
 sub gen_test_with_fragment{
-    my ($this, $fragment, $title) = @_;
+    my ($this, $fragment, $title, $test) = @_;
+
+    gen_act_with_fragment($this, $fragment, $title, test=>1);
+}
+
+sub gen_act_with_fragment{
+    my ($this, $fragment, $title, $test) = @_;
     #print "fragment:$fragment\n";
+
+    ## manifest
+    my $target_module = $this->target_module;
+    my $module = new Module($target_module);
+    my $manifest_path = $module->manifest;
+    my $manifest = new Manifest($manifest_path);
+    my $manifest_pack = $manifest->pack;
+
+    if($fragment =~ /^\w+$/){
+        $fragment = $manifest_pack.".app.".$fragment;
+        #print "fragment:$fragment\n";
+    }
 
     $fragment =~ /([\w\.]+)\.(\w+)$/;
     my $pack = $1;
@@ -75,15 +93,17 @@ sub gen_test_with_fragment{
     $frag_prefix =~ s/Fragment$//;
     #print "(pack,frag, prefix)=>($pack, $frag, $frag_prefix)\n";
     my $act_pack = $this->target_package;
-    my $act_target = $frag_prefix."ActivityForTest";
+    if(!$act_pack){
+        ## of fragment package
+        $act_pack = $pack;
+    }
+    my $act_target = $frag_prefix."Activity";
+    if($test){
+        $act_target = $act_target."ForTest";
+    }
     my $act_class = $act_pack."\.".$act_target;
 
-    my $target_module = $this->target_module;
-    my $module = new Module($target_module);
-    my $manifest_path = $module->manifest;
 
-    my $manifest = new Manifest($manifest_path);
-    my $manifest_pack = $manifest->pack;
 
     ## check exists
     my $target_path = $module->src($act_pack, $act_target);
@@ -94,7 +114,7 @@ sub gen_test_with_fragment{
     ## get src
     my $template = new Template();
 
-    my $act_src_path = $template->get_src("TemplateActivityForTest");
+    my $act_src_path = $template->get_src("TemplateActivity");
 
     ## init data
     my $data;
@@ -102,18 +122,29 @@ sub gen_test_with_fragment{
         $data = new Reader($act_src_path)->data;
         #print $act_src_path;
 
+        if(!$test && !$title){
+            my $ss = $frag_prefix;
+            $ss =~ /^([A-Z][a-z]+)([A-Z][a-z]+)$/;
+            my $a1 = $1; my $a2 = $2;
+            $a1 =~ tr/[A-Z]/[a-z]/;$a2 =~ tr/[A-Z]/[a-z]/;
+            $title = "R.string.title_activity_".$a1."_".$a2;
+            #print "new_title:$ss <> $title\n";
+        }
+
         ## to title
         if($title){
             my $target_pack = $this->target_package;
-            my $title_line0 = "R.string.title_activity_unit_test";
+            my $title_line0 = "R.string.title_activity_template";
             my $title_line = "\"$title\"";
+            if($title =~ /^R\.string\./){
+                $title_line = $title;
+            }
             $data =~ s/$title_line0/$title_line/;
         }
 
         ## to target package
-        my $target_pack = $this->target_package;
         my $pack_line0 = "package com.jfeat.plugin.template";
-        my $pack_line = "package $target_pack";
+        my $pack_line = "package $act_pack";
         $data =~ s/$pack_line0/$pack_line/;
 
         ## to new Fragment
@@ -122,8 +153,12 @@ sub gen_test_with_fragment{
         $data =~ s/$new_line0/$new_line/;
 
         ## to target import
-        my $import_line0 = "import com.jfeat.plugin.template.TemplateFragment";
-        my $import_line = "import $pack.$frag";
+        my $import_line0 = "import com.jfeat.plugin.template.TemplateFragment;";
+        my $import_line = "import $pack.$frag;";
+        #print "(act_pack,pack)=>($act_pack,$pack)\n";
+        if($pack eq $act_pack){
+            $import_line = undef;
+        }
         $data =~ s/$import_line0/$import_line/;
 
         # import R
@@ -133,12 +168,14 @@ sub gen_test_with_fragment{
         $data =~ s/TemplateFragment/$frag/;
 
         ## to target class
-        my $class_line0 = "class TemplateActivityForTest";
+        my $class_line0 = "class TemplateActivity";
         my $class_line = "class $act_target";
         $data =~ s/$class_line0/$class_line/;
     }
     #print $data;
-
+    #if(-f $target_path){
+    #    return 0;
+    #}
 
     my $writer = new Writer();
     $writer->write_new($target_path, $data);
@@ -153,8 +190,6 @@ sub gen_test_with_fragment{
     $manifest->append_activity_with_name($activity_pack_relative);
     $manifest->save();
 }
-
-
 
 
 return 1;
