@@ -46,7 +46,18 @@ while (@ARGV) {
           my $reader = new Reader($list_file);
           my @lines = $reader->list;
 
-          $json_hash->{fragments} = \@lines;
+          my @newlist;
+          foreach(@lines){
+            my $l = $_;
+            $l =~ s/\.java$//;
+
+            my $h = {fragment=>undef,title=>undef};
+            $h->{fragment} = $l;
+
+            push(@newlist,$h);
+          }
+
+          $json_hash->{fragments} = \@newlist;
 
     }elsif (/^-./) {
         print STDERR "Unknown option: $_\n";

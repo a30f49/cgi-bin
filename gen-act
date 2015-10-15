@@ -66,7 +66,22 @@ if($test){
 
     foreach(@fragments){
         my $frag = $_;
-        print;print "\n";
-        $act->gen_test_with_fragment($frag);
+
+        my $type = ref $frag;
+        if($type eq 'HASH'){
+            my $f = $frag->{fragment};
+            my $t = $frag->{title};
+            if( $act->gen_test_with_fragment($f, $t) ){
+                print "Done...$f\n";
+            }else{
+                print "Pass...$f\n";
+            }
+        }else{
+            if($act->gen_test_with_fragment($frag)){
+                print "Done...$frag\n";
+            }else{
+                print "Pass...$frag\n";
+            }
+        }
     }
 }

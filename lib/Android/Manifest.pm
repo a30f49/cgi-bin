@@ -67,10 +67,24 @@ sub append_activity_with_name{
     my $xml_obj = $this->the_obj;
     my $app = $xml_obj->{application};
 
-    my $act = {
-        'android:name' => $act_name
-    };
-    push(@{$app->{activity}}, $act);
+    ## find act with name
+    my $the_act = $app->{activity}('android:name','eq',$act_name);
+
+    if($the_act){
+        $the_act->{'android:name'} = $act_name;
+    }else{
+        my $act = {
+            'android:name' => $act_name
+        };
+        push(@{$app->{activity}}, $act);
+    }
+}
+
+sub activity_exists{
+    my ($this, $act_name) = @_;
+
+
+
 }
 
 sub save{

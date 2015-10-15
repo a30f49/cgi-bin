@@ -65,14 +65,15 @@ sub manifest_package{
 }
 
 sub gen_test_with_fragment{
-    my ($this, $fragment) = @_;
+    my ($this, $fragment, $title) = @_;
+    #print "fragment:$fragment\n";
 
     $fragment =~ /([\w\.]+)\.(\w+)$/;
     my $pack = $1;
     my $frag = $2;
     my $frag_prefix = $frag;
     $frag_prefix =~ s/Fragment$//;
-    #print "(pack,fragment, prefix)=>($pack, $frag, $frag_prefix)\n";
+    #print "(pack,frag, prefix)=>($pack, $frag, $frag_prefix)\n";
     my $act_pack = $this->target_package;
     my $act_target = $frag_prefix."ActivityForTest";
     my $act_class = $act_pack."\.".$act_target;
@@ -84,6 +85,11 @@ sub gen_test_with_fragment{
     my $manifest = new Manifest($manifest_path);
     my $manifest_pack = $manifest->pack;
 
+    ## check exists
+    my $target_path = $module->src($act_pack, $act_target);
+    if(-f $target_path){
+        return 0;
+    }
 
     ## get src
     my $template = new Template();
@@ -95,6 +101,14 @@ sub gen_test_with_fragment{
     {
         $data = new Reader($act_src_path)->data;
         #print $act_src_path;
+
+        ## to title
+        if($title){
+            my $target_pack = $this->target_package;
+            my $title_line0 = "R.string.title_activity_unit_test";
+            my $title_line = "\"$title\"";
+            $data =~ s/$title_line0/$title_line/;
+        }
 
         ## to target package
         my $target_pack = $this->target_package;
@@ -125,10 +139,6 @@ sub gen_test_with_fragment{
     }
     #print $data;
 
-    ## write to target
-    my $target_package = $this->target_package;
-    my $target_path = $module->src($this->target_package, $act_target);
-    #print "(target_module, target_package)=>($target_module, $target_package)\n";
 
     my $writer = new Writer();
     $writer->write_new($target_path, $data);
