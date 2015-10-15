@@ -1,0 +1,29 @@
+#!/usr/bin/perl
+
+use lib qw(lib);
+
+use File::Reader;
+use File::Writer;
+use File::Spec;
+
+#get user home
+
+my $home = $ENV{HOME};
+#print "home:$home\n";
+my $bash = $home."/.bashrc";
+
+my $cgi_path = File::Spec->rel2abs('.');
+
+my $reader = new Reader($bash);
+my $data = $reader->data;
+
+my $line = "\$PATH:$cgi_path";
+$data =~ s/\$PATH:[\/\w-]+/$line/;
+
+#print $data;
+
+my $w = new Writer();
+$w->write_new($bash, $data);
+
+
+
