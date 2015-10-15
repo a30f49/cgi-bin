@@ -15,7 +15,7 @@ use Android::Gradle;
 
 
 if( ! (-f 'build.gradle')){
-   print "Not an android root\n";
+   print "Not an android root, no xml-layout\n";
    exit(0);
 }
 

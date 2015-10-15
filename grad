@@ -45,7 +45,7 @@ while (@ARGV) {
 
 sub usage{
     print "Usage:\n";
-    print "  grad --root <-a>  \n";
+    print "  grad --root [-a]  \n";
     print "     Options: --root       ## list project modules\n";
     print "              -a           ## list only android modules\n";
 }

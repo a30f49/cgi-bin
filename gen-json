@@ -1,13 +1,16 @@
 #!/usr/bin/perl
 BEGIN {
     my $cwd = $0;
-    $cwd =~ s/\/\w+$//;
+    $cwd =~ s/\/[\w-]+$//;
     push( @INC, "$cwd/lib");
 }
 use strict;
 use warnings;
 
 use Path;
+use File::Reader;
+use File::Writer;
+use JSON;
 
 use Android::Gradle;
 use Android::Module;
@@ -18,6 +21,9 @@ if($ARGC==0){
     exit(0);
 }
 
+my $json_hash={
+};
+
 while (@ARGV) {
     local $_ = shift @ARGV;
     if ($_ eq '-h' || $_ eq '--help') {
@@ -27,15 +33,21 @@ while (@ARGV) {
     }elsif($_ eq '-m'){
         my $module_name = shift;
 
-        exit(0);
+        $json_hash->{module} = $module_name;
+
     }elsif($_ eq '-p'){
          my $package_name = shift;
 
-         exit(0);
+         $json_hash->{'package'} = $package_name;
+
     }elsif($_ eq '-f'){
           my $list_file = shift;
 
-          exit(0);
+          my $reader = new Reader($list_file);
+          my @lines = $reader->list;
+
+          $json_hash->{fragments} = \@lines;
+
     }elsif (/^-./) {
         print STDERR "Unknown option: $_\n";
         usage();
@@ -45,8 +57,11 @@ while (@ARGV) {
 
 sub usage{
     print "Usage:\n";
-    print "  gen_json -m <module> -p <package> -f <list-file>\n";
+    print "  gen-json -m <module> -p <package> -f <list-file>\n";
     print "    options: -m <module>      #specific the target module name\n";
     print "             -p <package>     #specific the target package\n";
     print "             -f <list-file>   #specific the fragment list files\n";
 }
+
+my $json_data = JSON->new->encode($json_hash);
+print $json_data;

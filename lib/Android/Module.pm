@@ -117,6 +117,10 @@ sub src_fragments{
 
 sub find_all{
     if(/Fragment\.java$/){
+        if(/DialogFragment\.java$/){
+            next; #skip dialog fragment
+        }
+
         if(-f $_){
         push(@{$_fragments}, File::Spec->rel2abs($_));
         }

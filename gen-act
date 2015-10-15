@@ -1,0 +1,72 @@
+#!/usr/bin/perl
+BEGIN {
+    my $cwd = $0;
+    $cwd =~ s/\/[\w-]+$//;
+    push( @INC, "$cwd/lib");
+}
+use strict;
+use warnings;
+use JSON;
+use File::Spec;
+
+use Path;
+
+use File::Reader;
+
+use Plugin::ActivityGenerator;
+
+my $test;
+my $json_in;
+
+my $ARGC = @ARGV;
+if($ARGC==0){
+    usage();
+    exit(0);
+}
+
+while (@ARGV) {
+    local $_ = shift @ARGV;
+    if ($_ eq '-h' || $_ eq '--help') {
+        usage();
+        exit(0);
+    }elsif($_ eq '--test'){
+        $test = 1;
+    }elsif($_ eq '--json'){
+        $json_in = shift;
+        if(!$json_in){
+            usage();
+            exit(0);
+        }
+
+    }elsif (/^-./) {
+        print STDERR "Unknown option: $_\n";
+        usage();
+        exit(0);
+    }
+}
+
+sub usage{
+    print "Usage:\n";
+    print "  gen-act --test --json <json-file>    #gen activity of with <json-file>\n";
+}
+
+#my $json_path = File::Spec->rel2abs($json_in);
+my $json_data = new Reader($json_in)->data;
+
+my $PARAM = decode_json($json_data);
+my $module = $PARAM->{module};
+my $pack   = $PARAM->{'package'};
+#print "(module,pack)->($module,$pack)\n";
+
+my $act = new ActivityGenerator($module);
+$act->target_package($pack);
+
+if($test){
+    my @fragments = @{$PARAM->{fragments}};
+
+    foreach(@fragments){
+        my $frag = $_;
+        print;print "\n";
+        $act->gen_test_with_fragment($frag);
+    }
+}

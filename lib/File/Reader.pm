@@ -26,5 +26,27 @@ sub data{
   return $data;
 }
 
+sub list{
+  my ($this, $in) = @_;
+  if(!$in){
+    $in = $this->{_in};
+  }
+
+  my @list;
+  #local $/; #Enable 'slurp' mode
+  open my $fh, "<", "$in";
+  @list = <$fh>;
+  close $fh;
+
+  my @newlist;
+  foreach(@list){
+    my $line = $_;
+    chomp($line);
+    push(@newlist, $line);
+  }
+
+  return @newlist;
+}
+
 
 return 1;
