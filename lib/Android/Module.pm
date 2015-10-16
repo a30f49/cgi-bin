@@ -43,6 +43,11 @@ sub xml{
     return $xml_path;
 }
 
+sub get_xml{
+    my ($this, $xml) = @_;
+    return $this->xml($xml);
+}
+
 sub src{
     my ($this, $package, $class) = @_;
     my $module_name = $this->{_module};

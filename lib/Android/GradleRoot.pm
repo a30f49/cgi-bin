@@ -8,8 +8,10 @@ sub new{
         _root => undef
     };
 
-    #$self->{_root} = new Path()->parent;
     $self->{_root} = new Path()->path;
+    if($self->{_root} =~ /cgi-bin$/){
+        $self->{_root} = new Path()->parent;
+    }
 
     bless $self, $class;
     return $self;

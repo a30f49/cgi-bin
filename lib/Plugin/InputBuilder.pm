@@ -1,4 +1,4 @@
-package Flow;
+package InputFlow;
 use lib qw(lib);
 use File::chdir;
 use Cwd;
@@ -11,17 +11,12 @@ use utf8;
 use Data::Dumper;
 use Android::Template;
 use Android::Module;
-use Plugin::SmartWrapper;
+
+use Plugin::TemplateProvider;
 
 sub new{
     my $class = shift;
     my $self = {
-        _target_module => shift,
-        _xml_obj => undef,
-        _container_template         => undef,
-        _container_item_template    => undef,
-        _divider_template           => undef,
-        _divider_group_template     => undef
     };
     bless $self, $class;
 
@@ -56,7 +51,6 @@ sub divider_group_template{
     }
     return $this->{_divider_group_template};
 }
-
 
 ## gen the xml
 sub gen{
@@ -185,7 +179,5 @@ sub save{
     my $xml_path = $module->xml($xml);
     $XML->save($xml_path);
 }
-
-
 
 return 1;
