@@ -15,10 +15,8 @@ use Android::Template;
 sub new{
     my $class = shift;
     my $self = {
-        _container_template         => undef,
-        _container_item_template    => undef,
-        _divider_template           =>undef,
-        _divider_group_template     =>undef,
+        _divider           =>undef,
+        _divider_group     =>undef,
     };
     bless $self, $class;
 
@@ -44,6 +42,19 @@ sub get_root{
     return $xml_obj;
 }
 
+sub divider_root{
+    my ($this) = @_;
+
+    my $divider_xml = 'template_divider';
+    return $this->get_root($divider_xml);
+}
+
+sub divider_group_root{
+    my ($this) = @_;
+    my $divider_group_xml = 'template_divider_group';
+    return $this->get_root($divider_group_xml);
+}
+
 
 ####################
 ## get the tree of smart object
@@ -66,35 +77,6 @@ sub get_tree{
     delete $xml_obj->{'xmlns:android'};
     my $root_key = $xml_obj->key;
     return $xml_obj->tree->{$root_key};
-}
-
-sub container{
-    my ($this, $xml) = @_;
-    if($xml){
-        $this->{_container_template} = $xml;
-    }
-    return $this->{_container_template};
-}
-sub container_item{
-    my ($this, $xml) = @_;
-    if($xml){
-        $this->{_container_item_template} = $xml;
-    }
-    return $this->{_container_item_template};
-}
-sub divider{
-    my ($this, $xml) = @_;
-    if($xml){
-        $this->{_divider_template} = $xml;
-    }
-    return $this->{_divider_template};
-}
-sub divider_group{
-    my ($this, $xml) = @_;
-    if($xml){
-        $this->{_divider_group_template} = $xml;
-    }
-    return $this->{_divider_group_template};
 }
 
 return 1;
