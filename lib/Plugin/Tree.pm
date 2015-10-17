@@ -3,6 +3,8 @@ use lib qw(lib);
 use strict;
 use warnings;
 
+use Path;
+
 sub new{
     my $class = shift;
     my $self = {
@@ -32,16 +34,24 @@ sub tree{
     my ($this) = @_;
 
     my $child_item = $this->{_root};
+    my $root_tree = $child_item->tree;
 
-    my $root = $child_item->base;
-    $root = $root->cut_root;
+    my $child_path = $child_item->path;
 
-}
+    my $path = new Path($child_path);
+    #print "path:".$path->root."\n";
 
-sub find_tree{
-    my ($root, $child_item) = @_;
+    while(1){
+        my $cut = $path->shift_path;
+        #print "cut: $cut\n";
+        if(!$cut){
+            return $root_tree;
+        }
 
-    return $child_item->tree;
+        $root_tree = $root_tree->{$cut};
+    }
+
+    return $root_tree;
 }
 
 return 1;

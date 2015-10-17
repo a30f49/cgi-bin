@@ -13,23 +13,24 @@ use Data::Dumper;
 use Plugin::Tree;
 use Plugin::Binding;
 use Plugin::Stack;
+use Plugin::ModuleTarget;
 
 my $items =
  [
     {
         field=>'name',
         title=>'编号',
-        hint=>'餐桌编编号'
+        hint=>'餐桌编号'
     },
     {
         field => "alias_name",
         title => "关键字",
-        hint => "餐桌搜索关键字母"
+        hint => "搜索关键字"
     },
     {
         field =>  "parent_id",
         title => "类别",
-        hint => "餐桌所属类别"
+        hint => "所属类别"
     }
  ];
 my @list = @{$items};
@@ -46,5 +47,7 @@ foreach(@list){
     $stack->add_one($item_root);
 };
 
-#print $stack->data;
+
+my $module = new ModuleTarget('module-admin', 'fragment_admin_new_asset_smart');
+my $target = $module->save($stack->data);
 

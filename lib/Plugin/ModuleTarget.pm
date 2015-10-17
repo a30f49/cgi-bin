@@ -5,6 +5,8 @@ use warnings;
 
 use Android::Module;
 
+use File::Writer;
+
 sub new{
     my $class = shift;
     my $self = {
@@ -25,5 +27,16 @@ sub target{
     my $xml_path = $module->get_xml($xml);
     return $xml_path;
 }
+
+sub save{
+    my ($this, $data)  = @_;
+
+    my $target_xml = $this->target;
+
+    my $w = new Writer();
+    $w->write_new($target_xml, $data);
+}
+
+
 
 return 1;

@@ -14,7 +14,10 @@ sub new{
     my $self = {
         _container => shift,
         _divider => undef,
-        _divider_group => undef
+        _divider_group => undef,
+        _container_tree => undef,
+        _divider_tree => undef,
+        _divider_group_tree => undef
     };
     bless $self, $class;
 
@@ -69,24 +72,42 @@ sub divider_group_key{
 sub container_tree{
     my ($this) = @_;
 
+    if($this->{_container_tree}){
+        return $this->{_container_tree};
+    }
+
     my $container_root = $this->{_container};
-    my $tree = new Tree($container_root)->root_tree;
+    my $tree = new Tree($container_root)->tree;
+    $this->{_container_tree} = $tree;
+
     return $tree;
 }
 
 sub divider_tree{
     my ($this) = @_;
 
+    if($this->{_divider_tree}){
+        return $this->{_divider_tree};
+    }
+
     my $root = $this->{_divider};
-    my $tree = new Tree($root)->root_tree;
+    my $tree = new Tree($root)->tree;
+    $this->{_divider_tree} = $tree;
+
     return $tree;
 }
 
 sub divider_group_tree{
     my ($this) = @_;
 
+    if($this->{_divider_group_tree}){
+        return $this->{_divider_group_tree};
+    }
+
     my $root = $this->{_divider_group};
-    my $tree = new Tree($root)->root_tree;
+    my $tree = new Tree($root)->tree;
+    $this->{_divider_group_tree} = $tree;
+
     return $tree;
 }
 
