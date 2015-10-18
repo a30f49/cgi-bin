@@ -27,7 +27,7 @@ sub path{
     return $this->{_root};
 }
 
-sub last_segment{
+sub basename{
     my $this = shift;
     my $path = $this->{_root};
 

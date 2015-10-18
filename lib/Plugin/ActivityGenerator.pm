@@ -1,7 +1,6 @@
 package ActivityGenerator;
 =head1 SYNOPSIS
-    my $act = new Activity("app");
-    $act->target_package("com.jfeat.apps.quandian.units");
+    my $act = new Activity("app", "com.jfeat.apps.quandian.units");
 
     #$act->gen_with_fragment("com.jfeat.apps.quandian.module.admin.app.AdminUsersFragment");
     $act->gen_test_with_fragment("com.jfeat.apps.quandian.module.admin.app.AdminUsersFragment");
@@ -34,6 +33,7 @@ sub new{
     my $self = {
         _target_module  => shift,
         _target_package => shift,
+        _activity => undef
     };
     bless $self, $class;
 
@@ -48,6 +48,11 @@ sub target_module{
    }
 
    return $this->{_target_module};
+}
+
+sub new_activity{
+    my ($this) = @_;
+    return $this->{_activity};
 }
 
 sub target_package{
@@ -73,13 +78,13 @@ sub manifest_package{
 }
 
 sub gen_test_with_fragment{
-    my ($this, $fragment, $title, $test) = @_;
+    my ($this, $fragment, $test) = @_;
 
-    gen_act_with_fragment($this, $fragment, $title, test=>1);
+    gen_act_with_fragment($this, $fragment, test=>1);
 }
 
 sub gen_act_with_fragment{
-    my ($this, $fragment, $title, $test) = @_;
+    my ($this, $fragment, $test) = @_;
     #print "fragment:$fragment\n";
 
     ## manifest
@@ -111,8 +116,6 @@ sub gen_act_with_fragment{
     }
     my $act_class = $act_pack."\.".$act_target;
 
-
-
     ## check exists
     my $target_path = $module->src($act_pack, $act_target);
     if(-f $target_path){
@@ -130,10 +133,12 @@ sub gen_act_with_fragment{
         $data = new Reader($act_src_path)->data;
         #print $act_src_path;
 
-        if(!$test && !$title){
+        my $title;
+        {
             my $ss = $frag_prefix;
-            $ss =~ /^([A-Z][a-z]+)([A-Z][a-z]+)$/;
+            $ss =~ /([A-Z][a-z]+)([A-Z][a-z]+)$/;
             my $a1 = $1; my $a2 = $2;
+            #print "(ss:a1:a2)=>($ss,$a1,$a2)\n";
             $a1 =~ tr/[A-Z]/[a-z]/;$a2 =~ tr/[A-Z]/[a-z]/;
             $title = "R.string.title_activity_".$a1."_".$a2;
             #print "new_title:$ss <> $title\n";
@@ -180,10 +185,6 @@ sub gen_act_with_fragment{
         my $class_line = "class $act_target";
         $data =~ s/$class_line0/$class_line/;
     }
-    #print $data;
-    #if(-f $target_path){
-    #    return 0;
-    #}
 
     my $writer = new Writer();
     $writer->write_new($target_path, $data);
@@ -195,6 +196,8 @@ sub gen_act_with_fragment{
     #print "(act_pack,manifest_pack)=>($act_class,$manifest_pack)\n";
     $activity_pack_relative =~ s/$manifest_pack//;
     #print "activity_pack_relative:$activity_pack_relative\n";
+    $this->{_activity} = $activity_pack_relative;
+
     $manifest->append_activity_with_name($activity_pack_relative);
     $manifest->save();
 }

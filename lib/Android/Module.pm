@@ -28,6 +28,7 @@ sub manifest{
     my $manifest_relative = $gradle->manifest;
 
     my $xml_path = new Path($module_root)->with($manifest_relative)->path;
+    return $xml_path;
 }
 
 sub xml{
@@ -127,7 +128,7 @@ sub find_all{
         }
 
         if(-f $_){
-        push(@{$_fragments}, File::Spec->rel2abs($_));
+            push(@{$_fragments}, File::Spec->rel2abs($_));
         }
     }
 }
