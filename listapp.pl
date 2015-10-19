@@ -21,6 +21,11 @@ if(! Android::is_android_root){
     exit(0);
 }
 
+if(! Android::is_android_one){
+    print STDERR "fatal: Not an android module.\n";
+    exit(0);
+}
+
 &list_all_fragments;
 
 sub list_all_fragments{

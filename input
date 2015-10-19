@@ -1,3 +1,0 @@
-#!/bin/bash
-
-class-input.pl $1
