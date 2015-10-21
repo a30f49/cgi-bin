@@ -30,7 +30,12 @@ if(! Android::is_android_one){
 
 sub list_all_fragments{
     my $mod = new Path()->basename;
+
     my $app_path  = new ModuleData($mod)->path_to_app;
+    print $app_path;
+    if( !(-d $app_path) ){
+        return;
+    }
 
     my $dir= new Dir($app_path);
     my @list = $dir->files;
