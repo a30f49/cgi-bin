@@ -2,14 +2,26 @@ package GradleRoot;
 use lib qw(lib);
 use Path;
 
+use Android;
+
 sub new{
     my $class = shift;
     my $self = {
         _root => undef
     };
 
-    #$self->{_root} = new Path()->parent;
-    $self->{_root} = new Path()->path;
+    my $path = new Path();
+    my $cwd = $path->path;
+
+    if($cwd =~ /cgi-bin$/){
+        $self->{_root} = $path->parent;
+    }elsif(Android::is_android_one){
+        $self->{_root} = $path->parent;
+    }elsif(Android::is_android_pack){
+        $self->{_root} = $cwd;
+    }else{
+        print STDERR "fatal: Not an android repository.\n";
+    }
 
     bless $self, $class;
     return $self;

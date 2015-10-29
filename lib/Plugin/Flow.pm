@@ -11,18 +11,17 @@ use utf8;
 use Data::Dumper;
 use Android::Template;
 use Android::Module;
-use Plugin::Flow;
 use Plugin::SmartWrapper;
 
 sub new{
     my $class = shift;
     my $self = {
         _target_module => shift,
+        _xml_obj => undef,
         _container_template         => undef,
         _container_item_template    => undef,
-        _divider_template           =>undef,
-        _divider_group_template     =>undef,
-        _xml_obj => undef
+        _divider_template           => undef,
+        _divider_group_template     => undef
     };
     bless $self, $class;
 
@@ -58,6 +57,7 @@ sub divider_group_template{
     return $this->{_divider_group_template};
 }
 
+
 ## gen the xml
 sub gen{
     my ($this, $groups) = @_;
@@ -76,8 +76,8 @@ sub gen{
     my $container_tree = $container->last_child_of_tree;
     $container = $container->last_child;
 
-    my $container_root_key = $container->root;
-    my $container_last_key = $container->key;
+    #my $container_root_key = $container->root;
+    #my $container_last_key = $container->key;
     #print "container(root,last)=>($container_root_key, $container_last_key)\n";
     #print Dumper($container_tree);
 
@@ -185,5 +185,7 @@ sub save{
     my $xml_path = $module->xml($xml);
     $XML->save($xml_path);
 }
+
+
 
 return 1;

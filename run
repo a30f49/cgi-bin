@@ -1,0 +1,6 @@
+#!/usr/bin/bash
+
+#echo $(dirname $0)/test.pl
+/usr/bin/perl $(dirname $0)/test.pl
+
+

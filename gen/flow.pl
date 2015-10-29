@@ -7,7 +7,6 @@ use warnings;
 use JSON;
 use utf8;
 use Data::Dumper;
-use JSON;
 
 use Plugin::Flow;
 

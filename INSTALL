@@ -17,10 +17,13 @@ my $cgi_path = File::Spec->rel2abs('.');
 my $reader = new Reader($bash);
 my $data = $reader->data;
 
-my $line = "\$PATH:$cgi_path";
-$data =~ s/\$PATH:[\/\w-]+/$line/;
-
-#print $data;
+if($data =~ /^export\s+PATH\s*=\s*\$PATH/){
+    my $line = "\$PATH:$cgi_path";
+    $data =~ s/\$PATH:[\/\w-]+/$line/;
+    #print $data;
+}else{
+    $data = "export PATH=\$PATH:$cgi_path\n$data";
+}
 
 my $w = new Writer();
 $w->write_new($bash, $data);

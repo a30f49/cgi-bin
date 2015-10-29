@@ -27,7 +27,7 @@ sub path{
     return $this->{_root};
 }
 
-sub last_segment{
+sub basename{
     my $this = shift;
     my $path = $this->{_root};
 
@@ -62,6 +62,24 @@ sub with{
     $this->{_root} = $new_path;
 
     return $this;
+}
+
+sub shift_path{
+    my ($this) = @_;
+
+    my $root_path = $this->{_root};
+    if(!$root_path || $root_path =~ /^\s*$/){
+        $this->{_root} = undef;
+        return undef;
+    }
+
+    $root_path =~ /^\/*(\w+)/;
+    my $sh = $1;
+
+    $root_path =~ s/^\/*\w+//;
+    $this->{_root} = $root_path;
+
+    return $sh;
 }
 
 

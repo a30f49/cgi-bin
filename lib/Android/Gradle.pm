@@ -90,6 +90,10 @@ sub layout{
 
 sub xml{
     my ($this, $xml_name) = @_;
+    if($xml_name !~ /\.xml$/){
+        $xml_name = $xml_name.".xml";
+    }
+
     my $layout = $this->layout;
     return new Path($layout)->with($xml_name)->path;
 }

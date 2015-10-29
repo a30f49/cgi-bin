@@ -1,0 +1,62 @@
+#!/usr/bin/perl
+BEGIN {
+    my $cwd = $0;
+    $cwd =~ s/\/[\w-\.]+$//;
+    push( @INC, "$cwd/lib");
+}
+use strict;
+use warnings;
+
+use Android;
+use Android::Gradle;
+use Android::Module;
+
+#check android area
+my $android = new Android();
+if(! Android::is_android_pack){
+    print STDERR "fatal: Not an android root repository.\n";
+    exit(0);
+}
+
+my $a = shift @ARGV;
+if($a){
+    if($a eq '-h'){
+       &usage;
+    }elsif($a eq '-a'){
+       &list_modules_of_android;
+    }
+}else{
+   &list_modules;
+}
+
+sub usage{
+    print "Usage:\n";
+    print "  listmod [-a]\n";
+    print "      option: -a       ## list only android modules\n";
+}
+
+sub list_modules{
+    my $gr = new GradleRoot();
+
+    my @modules = $gr->modules;
+    foreach(@modules){
+        print;
+        print "\n";
+    }
+}
+
+sub list_modules_of_android{
+    my $gr = new GradleRoot();
+    my @modules = $gr->modules;
+    foreach(@modules){
+        my $mod = $_;
+        my $mod_root = $gr->module_root($mod);
+
+        my $gradle = new Gradle($mod_root);
+
+        if($gradle->is_android){
+            print;
+            print "\n";
+        }
+    }
+}
