@@ -17,6 +17,15 @@ sub new{
     return $self;
 }
 
+sub gradle{
+    my ($this) = @_;
+    my $module_name = $this->{_module};
+    my $gr = new GradleRoot();
+    my $module_root = $gr->module_root($module_name);
+
+    return "$module_root/build.gradle";
+}
+
 sub manifest{
     my ($this) = @_;
 

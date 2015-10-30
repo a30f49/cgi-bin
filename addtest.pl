@@ -23,13 +23,11 @@ if(! Android::is_android_root){
 
 sub usage_out{
     print "Usage:\n";
-    print "  addact <module> <fragment> -t\n";
-    print "     option: -t         #gen activity for test\n";
+    print "  addtest <module> <fragment>\n";
 }
 sub usage_in{
     print "Usage:\n";
-    print "  addact <fragment> -t\n";
-    print "     option: -t         #gen activity for test\n";
+    print "  addtest <fragment>\n";
 }
 
 sub usage{
@@ -46,11 +44,11 @@ my $c= @ARGV;
     exit(0);
 }
 
-my ($param_mod, $param_frag, $test);
+my ($param_mod, $param_frag);
 
 ## if is android pack
 if(Android::is_android_pack){
-    ($param_mod, $param_frag, $test) = @ARGV;
+    ($param_mod, $param_frag) = @ARGV;
 
     if(!$param_mod || !$param_frag){
         usage_out;
@@ -58,12 +56,8 @@ if(Android::is_android_pack){
     }
 
 }elsif(Android::is_android_one){
-    ($param_frag, $test) = @ARGV;
-     $param_mod = new Path()->basename;
-
-     if($test){
-        $param_mod = 'app';
-     }
+    ($param_frag) = @ARGV;
+    $param_mod = 'app';
 
     if(!$param_frag){
         usage_in;
@@ -71,30 +65,7 @@ if(Android::is_android_pack){
     }
 }
 
-## the required param
-if($test){
-    &gen_test;
-}else{
-    #print "(param_mod,param_frag,param_title)=>($param_mod,$param_frag,$param_title)\n";
-    &gen_act;
-}
-
-sub gen_act{
-    ## get module pack
-    my $moduleData = new ModuleData($param_mod);
-    my $target_pack = $moduleData->pack_to_gen;
-    #print "target-pack:$target_pack\n";
-
-    my $fragment_pack = $moduleData->locate($param_frag);
-
-    my $act = new ActivityGenerator($param_mod, $target_pack);
-    if( $act->gen_act_with_fragment($fragment_pack)){
-        my $new_act = $act->new_activity;
-        print "Done...$param_frag=>$new_act\n";
-    }else{
-        print "Pass...$param_frag\n";
-    }
-}
+&gen_test;
 
 sub gen_test{
     ## get module pack

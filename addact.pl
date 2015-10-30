@@ -23,13 +23,11 @@ if(! Android::is_android_root){
 
 sub usage_out{
     print "Usage:\n";
-    print "  addact <module> <fragment> -t\n";
-    print "     option: -t         #gen activity for test\n";
+    print "  addact <module> <fragment>\n";
 }
 sub usage_in{
     print "Usage:\n";
-    print "  addact <fragment> -t\n";
-    print "     option: -t         #gen activity for test\n";
+    print "  addact <fragment>\n";
 }
 
 sub usage{
