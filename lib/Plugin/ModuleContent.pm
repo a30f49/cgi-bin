@@ -1,6 +1,6 @@
-package ModuleData;
+package ModuleContent;
 =head1
-    Get module common-used data
+    Get module common-used content, Package, etc.
 
     my $module_data = new ModuleData('app');
     my $pack = $module_data->pack;

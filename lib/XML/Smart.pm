@@ -778,6 +778,22 @@ sub find_child {
         return $this;
     }
 
+    my $last_child = $this;
+
+    return find_child_target($last_child, $key, $op, $value);
+}
+
+############
+# FIND_CHILD #
+############
+sub find_child_of_root {
+    my ($this, $key, $op, $value) = @_;
+
+    ## if no child, return the root
+    if(!$this->has_child){
+        return $this;
+    }
+
     my $last_child = $this->base;
     $last_child = $last_child->cut_root;
 
@@ -789,6 +805,7 @@ sub find_child_target{
 
     my $child_key = $last_child->key;
     #print "child key:".$last_child->key."\n";
+
     if($op eq 'eq'){
         if(exists $last_child->{$key}){
             if($last_child->{$key} eq $value){
@@ -796,10 +813,11 @@ sub find_child_target{
                 return $last_child;
             }
         }
-
         #delete $last_child->{$key};
-    }else{
-        die "invalid op: $op\n";
+    }elsif(!$op){
+        if(exists $last_child->{$key}){
+           return $last_child;
+        }
     }
 
     my @nodes = $last_child->nodes_keys ;
@@ -811,7 +829,7 @@ sub find_child_target{
 
     foreach (@nodes){
         my $root = $_;
-        #print "    root=>$root\n";
+        #print "   root=>$root\n";
 
         my $child = ( $last_child->{$root} );
         my $next_child = find_child_target($child, $key, $op, $value);
@@ -829,6 +847,47 @@ sub find_child_target{
 ############
 
 sub first_child {
+    my $this = shift ;
+
+    my $first_child = $this;
+    #print "origin key:".$first_child->key;print "\n";
+
+    my @nodes = $first_child->nodes_keys ;
+    my $count = @nodes;
+    if($count==0){
+        return $first_child;
+    }
+
+    my $root = $nodes[0] ;
+    $first_child = $first_child->{$root}[0];
+
+    return $first_child;
+}
+
+sub first_children {
+    my $this = shift ;
+
+    my $first_child = $this;
+    #print "origin key:".$first_child->key;print "\n";
+
+    my @nodes = $first_child->nodes_keys ;
+    my $count = @nodes;
+    if($count==0){
+        return $first_child;
+    }
+
+    my $root = $nodes[0] ;
+    $first_child = $first_child->{$root};
+
+    return $first_child;
+}
+
+
+############
+# FIRST_CHILD_OF_ROOT #
+############
+
+sub first_child_of_root {
     my $this = shift ;
 
     my $first_child = $this->base;
@@ -849,10 +908,10 @@ sub first_child {
 }
 
 ############
-# LAST_CHILD #
+# LAST_CHILD_OF_ROOT #
 ############
 
-sub last_child {
+sub last_child_of_root {
     my $this = shift ;
 
     my $last_child = $this->base;
@@ -872,35 +931,6 @@ sub last_child {
 
     return $last_child;
 }
-
-############
-# LAST_CHILD #
-############
-
-sub last_child_of_tree {
-    my $this = shift ;
-
-    my $last_child = $this->base;
-    my $last_tree = $last_child->tree;
-
-    while(1){
-        my @nodes = $last_child->nodes_keys ;
-
-        my $count = @nodes;
-        if($count==0){
-            return $last_tree;
-        }
-
-        my $last = $#nodes;
-        my $root = $nodes[$last] ;
-        $last_child = ( $last_child->{$root} );
-
-        $last_tree = $last_tree->{$root};
-    }
-
-    return $last_tree;
-}
-
 
 ###########
 # IS_NODE #

@@ -1,5 +1,5 @@
 package ActivityGenerator;
-=head1 SYNOPSIS
+=head1
     my $act = new Activity("app", "com.jfeat.apps.quandian.units");
 
     #$act->gen_with_fragment("com.jfeat.apps.quandian.module.admin.app.AdminUsersFragment");
