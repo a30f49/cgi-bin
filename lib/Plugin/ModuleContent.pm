@@ -1,9 +1,13 @@
 package ModuleContent;
 =head1
-    Get module common-used content, Package, etc.
+    Get module common-used content: Package, etc.
 
-    my $module_data = new ModuleData('app');
+    my $module_data = new ModuleContent('app');
     my $pack = $module_data->pack;
+    print $pack;
+
+    Output
+    $ com.jfeat.apps.sample
 
 =cut
 
@@ -14,7 +18,6 @@ use warnings;
 use Android::Module;
 use Android::Manifest;
 
-
 sub new{
     my $class = shift;
     my $self = {
@@ -24,6 +27,17 @@ sub new{
     return $self;
 }
 
+sub module{
+   my ($this, $mod) = @_;
+   if($mod){
+       $this->{_module} = $mod;
+   }
+   return $this->{_module};
+}
+
+#####################
+## get root package #
+#####################
 sub pack{
     my ($this) = @_;
 
@@ -37,6 +51,9 @@ sub pack{
     return $target_pack;
 }
 
+#####################
+## get app package #
+#####################
 sub pack_to_app{
     my ($this) = @_;
 
@@ -44,6 +61,9 @@ sub pack_to_app{
     return "$pack.app";
 }
 
+#####################
+## get gen package #
+#####################
 sub pack_to_gen{
     my ($this) = @_;
 
@@ -51,6 +71,9 @@ sub pack_to_gen{
     return "$pack.gen";
 }
 
+#####################
+## get test package #
+#####################
 sub pack_to_test{
     my ($this) = @_;
 
@@ -58,8 +81,10 @@ sub pack_to_test{
     return "$pack.test";
 }
 
-
-sub path_to_app{
+#####################
+## get path to the package #
+#####################
+sub path_to_pack{
     my ($this) = @_;
     my $mod = $this->{_module};
 
@@ -70,27 +95,69 @@ sub path_to_app{
     my $src = $gradle->src;
     my $src_path = "$mod_root/$src";
 
-    my $app_path  = $this->pack_to_app;
-    $app_path =~ tr/\./\//;
+    my $path  = $this->pack;
+    $path =~ tr/\./\//;
 
-    $app_path = "$src_path/$app_path";
+    $path = "$src_path/$path";
 
-    return $app_path;
+    return $path;
 }
 
+#####################
+## get path to the app package #
+#####################
+sub path_to_app{
+    my ($this) = @_;
+    my $path = $this->path_to_pack;
+
+    return "$path/app";
+}
+
+#####################
+## convert package to path #
+#####################
+sub pack_to_path{
+    my ($this, $pack) = @_;
+    my $mod = $this->{_module};
+
+    my $gr = new GradleRoot();
+    my $mod_root = $gr->module_root($mod);
+    my $gradle = new Gradle($mod_root);
+
+    my $src = $gradle->src;
+    my $src_path = "$mod_root/$src";
+
+    my $path  = $pack;
+    $path =~ tr/\./\//;
+
+    $path = "$src_path/$path";
+
+    return $path;
+}
+
+
 #######################
-## get fragment package
+## locate fragment package
 ######################
 sub locate{
     my ($this, $frag) = @_;
 
     my $mod = $this->{_module};
 
-    my $manifest_pack = $this->pack_to_app;
+    my $pack_path = $this->path_to_pack;
+    my $app_path = $this->path_to_app;
+    my $manifest_pack = $this->pack;
+    my $app_pack = $this->pack_to_app;
 
-    my $fragment_pack = "$manifest_pack.$frag";
+    if(-f "$pack_path/$frag.java"){
+        return "$manifest_pack.$frag";
+    }elsif(-f "$app_path/$frag.java"){
+        return "$app_pack.$frag";
+    }
 
-    return $fragment_pack;
+    print STDERR "ModuleContent: fail to locate $frag\n";
+
+    return undef;
 }
 
 

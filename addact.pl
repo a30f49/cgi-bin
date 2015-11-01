@@ -12,7 +12,7 @@ use File::Spec;
 use Android;
 
 use Plugin::ActivityGenerator;
-use Plugin::ModuleData;
+use Plugin::ModuleContent;
 
 #check android area
 my $android = new Android();
@@ -79,7 +79,7 @@ if($test){
 
 sub gen_act{
     ## get module pack
-    my $moduleData = new ModuleData($param_mod);
+    my $moduleData = new ModuleContent($param_mod);
     my $target_pack = $moduleData->pack_to_gen;
     #print "target-pack:$target_pack\n";
 
@@ -96,12 +96,12 @@ sub gen_act{
 
 sub gen_test{
     ## get module pack
-    my $moduleData = new ModuleData($param_mod);
+    my $moduleData = new ModuleContent($param_mod);
     my $target_pack = $moduleData->pack_to_test;
     #print "target-pack:$target_pack\n";
 
     my $mod = new Path()->basename;
-    my $mdata = new ModuleData($mod);
+    my $mdata = new ModuleContent($mod);
     my $fragment_pack = $mdata->locate($param_frag);
 
     my $act = new ActivityGenerator($param_mod, $target_pack);

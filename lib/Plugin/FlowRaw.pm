@@ -47,14 +47,14 @@ sub get_raw{
     my @children = @{$first_child};
     foreach(@children){
         my $child = $_;
-        print $child->key;print "\n";
+        #print $child->key;print "\n";
 
         my $ok_child = $child->find_child('android:id');
 
         my $id =  $ok_child->{'android:id'};
         $ok_child = $child->find_child('android:text');
         my $text = $ok_child->{'android:text'};
-        print "(id,text)=>($id,$text)\n";
+        #print "(id,text)=>($id,$text)\n";
 
         my $data_item = {};
         $data_item->{'title'} = "$text";

@@ -8,34 +8,25 @@ use strict;
 use warnings;
 use JSON;
 use File::Spec;
+use Data::Dumper;
 
 use Android;
 
 use Plugin::ActivityGenerator;
-use Plugin::ModuleData;
+use Plugin::ModuleContent;
+use Plugin::FlowRaw;
 
 #check android area
 my $android = new Android();
-if(! Android::is_android_root){
-    print STDERR "fatal: Not an android repository.\n";
+if(! Android::is_android_one){
+    print STDERR "fatal: Not an android module.\n";
     exit(0);
 }
 
-sub usage_out{
-    print "Usage:\n";
-    print "  addtest <module> <fragment>\n";
-}
-sub usage_in{
-    print "Usage:\n";
-    print "  addtest <fragment>\n";
-}
-
 sub usage{
-    if(Android::is_android_pack){
-        usage_out;
-    }elsif(Android::is_android_one){
-        usage_in;
-    }
+    print "Usage:\n";
+    print "  addtest <fragment> -f\n";
+    print "  -f   ,force overwrite\n";
 }
 
 if(@ARGV == 0){
@@ -44,23 +35,19 @@ my $c= @ARGV;
     exit(0);
 }
 
-my ($param_mod, $param_frag);
+my ($param_frag, $overwrite);
 
-## if is android pack
-if(Android::is_android_pack){
-    ($param_mod, $param_frag) = @ARGV;
+if(Android::is_android_one){
+    ($param_frag, $overwrite) = @ARGV;
 
-    if(!$param_mod || !$param_frag){
-        usage_out;
-        exit(0);
+    if($overwrite){
+        if($overwrite ne '-f'){
+            $overwrite = undef;
+        }
     }
 
-}elsif(Android::is_android_one){
-    ($param_frag) = @ARGV;
-    $param_mod = 'app';
-
     if(!$param_frag){
-        usage_in;
+        usage;
         exit(0);
     }
 }
@@ -68,19 +55,41 @@ if(Android::is_android_pack){
 &gen_test;
 
 sub gen_test{
+    my $target_mod = 'app';
+    my $target_pack = 'test';
+    my $test = 1;
+
+    my $done = 0;
+
+
     ## get module pack
-    my $moduleData = new ModuleData($param_mod);
-    my $target_pack = $moduleData->pack_to_test;
-    #print "target-pack:$target_pack\n";
-
+    my $mc = new ModuleContent();
     my $mod = new Path()->basename;
-    my $mdata = new ModuleData($mod);
-    my $fragment_pack = $mdata->locate($param_frag);
+    $mc->module($mod);
 
-    my $act = new ActivityGenerator($param_mod, $target_pack);
-    if( $act->gen_test_with_fragment($fragment_pack)){
+    ## from
+    my $fragment_pack = $mc->locate($param_frag);
+    print "$fragment_pack\n";
+
+    ## gen class
+    my $act = new ActivityGenerator($target_mod, $target_pack);
+    if( $act->gen_act($fragment_pack, $test, $overwrite)){
+        $done = 1;
+    }else{
+        $done = 0;
+    }
+
+
+    ## add to xml
+    my $raw = new FlowRaw('app');
+    my $data = $raw->get_raw("fragment_unit_test.xml");
+    print Dumper($data);
+
+
+    ### print result
+    if($done){
         my $new_act = $act->new_activity;
-        print "Done...$param_frag=>$new_act\n";
+        print "=>$new_act\n";
     }else{
         print "Pass...$param_frag\n";
     }
