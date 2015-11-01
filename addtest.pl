@@ -15,6 +15,9 @@ use Android;
 use Plugin::ActivityGenerator;
 use Plugin::ModuleContent;
 use Plugin::FlowRaw;
+use Plugin::FlowLayout;
+use Plugin::Binding;
+use Plugin::ModuleTarget;
 
 #check android area
 my $android = new Android();
@@ -80,10 +83,28 @@ sub gen_test{
     }
 
 
-    ## add to xml
-    my $raw = new FlowRaw('app');
-    my $data = $raw->get_raw("fragment_unit_test.xml");
-    print Dumper($data);
+    ## append to xml
+    #my $raw = new FlowRaw('app');
+    #my $data = $raw->get_raw("fragment_unit_test.xml");
+    #print Dumper($data);
+    my $layout = new FlowLayout('app', 'fragment_unit_test.xml');
+    my $template = $layout->first_child;
+    ## TODO, clone hash
+    ##
+    if(!$template){
+        my $tp = new TemplateProvider();
+        $template = $tp->template_root('template_test_item.xml');
+    }
+
+    my $binding = new Binding();
+    my $item = $act->gen_raw;
+    my $item_root = $binding->bind_test_item($item, $template);
+
+    my $stack = new FlowStack($layout->container);
+    $stack->add_one($item_root);
+
+    my $mt = new ModuleTarget('app', 'fragment_unit_test.xml');
+    $stack->save($mt->target);
 
 
     ### print result
@@ -94,4 +115,3 @@ sub gen_test{
         print "Pass...$param_frag\n";
     }
 }
-

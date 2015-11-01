@@ -864,7 +864,7 @@ sub first_child {
     return $first_child;
 }
 
-sub first_children {
+sub first_node_array {
     my $this = shift ;
 
     my $first_child = $this;
@@ -877,9 +877,9 @@ sub first_children {
     }
 
     my $root = $nodes[0] ;
-    $first_child = $first_child->{$root};
 
-    return $first_child;
+    my @node_array = @{$first_child->{$root}};
+    return @node_array;
 }
 
 

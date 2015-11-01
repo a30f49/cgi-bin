@@ -90,6 +90,32 @@ sub new_activity{
     return $this->{_activity};
 }
 
+sub gen_raw{
+    my ($this) = @_;
+    my $act  = $this->new_activity;
+    $act =~ s/ForTest$//;
+    $act =~ /(\w+)$/;
+    $act = $1;
+
+    $act =~ /([A-Z][a-z0-9]+)([A-Z][a-z0-9]+)*Activity/;
+    #print "(act, 1,2)=>($act, $1, $2)\n";
+
+    my $id = '@+id/action_';
+    $id = "$id$1";
+    if($2){
+        $id = $id."_".$2;
+    }
+    $id =~ tr/[A-Z]/[a-z]/;
+
+    $act =~ s/Activity/Fragment/;
+
+    my $raw_item = {};
+    $raw_item->{id} = $id;
+    $raw_item->{title} = $act;
+
+    return $raw_item;
+}
+
 
 #####################
 ## Gen new activity for fragment #
@@ -207,7 +233,6 @@ sub gen_act{
     }elsif(-f $target_path_name){
         print STDERR "Activity \"$target_path_name\" exists, passed.\n";
         $write_new = 0;
-        return undef;
     }else{
         $write_new = 1;
     }
@@ -226,12 +251,14 @@ sub gen_act{
     $this->{_activity} = $activity_pack_relative;
 
     ## manifest
-    my $target_module = $this->target_module;
-    my $module = new Module($target_module);
-    my $manifest_path = $module->manifest;
-    my $manifest = new Manifest($manifest_path);
-    $manifest->append_activity_with_name($activity_pack_relative);
-    $manifest->save();
+    if($write_new){
+        my $target_module = $this->target_module;
+        my $module = new Module($target_module);
+        my $manifest_path = $module->manifest;
+        my $manifest = new Manifest($manifest_path);
+        $manifest->append_activity_with_name($activity_pack_relative);
+        $manifest->save();
+    }
 }
 
 sub parse_fragment_pack{

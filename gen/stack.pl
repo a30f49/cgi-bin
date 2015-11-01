@@ -18,17 +18,17 @@ use Plugin::ModuleTarget;
 my $items =
  [
     {
-        field=>'name',
+        field=>'asset_name',
         title=>'编号',
         hint=>'餐桌编号'
     },
     {
-        field => "alias_name",
+        field => "asset_alias_name",
         title => "关键字",
         hint => "搜索关键字"
     },
     {
-        field =>  "parent_id",
+        field =>  "asset_parent_id",
         title => "类别",
         hint => "所属类别"
     }

@@ -46,12 +46,12 @@ sub tree{
         my $cut = $path->shift_path;
         #print "cut: $cut\n";
         if(!$cut){
-            #my $ref = ref $root_tree;
-            #if($ref eq "ARRAY"){
-            #    my $root_tree = @{$root_tree}[0];
-            #    #print Dumper($root_tree);
-            #    return $root_tree;
-            #}
+            my $ref = ref $root_tree;
+            if($ref eq "ARRAY"){
+                my $root_tree = @{$root_tree}[0];
+                #print Dumper($root_tree);
+                return $root_tree;
+            }
 
             return $root_tree;
         }

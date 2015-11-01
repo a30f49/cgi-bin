@@ -1,13 +1,13 @@
-package Stack;
+package FlowStack;
 use lib qw(lib);
 use strict;
 use warnings;
 
 use Data::Dumper;
 
-use Plugin::Tree;
+use File::Writer;
 
-use Plugin::TemplateProvider;
+use Plugin::Tree;
 
 sub new{
     my $class = shift;
@@ -141,6 +141,13 @@ sub data{
     my ($this) = @_;
 
     return $this->container_root->data;
+}
+
+sub save{
+    my ($this, $target)  = @_;
+
+    my $w = new Writer();
+    $w->write_new($target, $this->data);
 }
 
 

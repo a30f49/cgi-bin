@@ -21,6 +21,11 @@ sub new{
     return $self;
 }
 
+sub module{
+    my ($this) = @_;
+    return $this->{_module};
+}
+
 sub get_xml{
     my ($this, $xml) = @_;
     my $gradle = $this->{_gradle_obj};

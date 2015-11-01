@@ -18,7 +18,7 @@ use XML::Smart;
 
 use Plugin::Tree;
 
-use Plugin::FlowProvider;
+use Plugin::FlowLayout;
 
 sub new{
     my $class = shift;
@@ -37,7 +37,7 @@ sub get_raw{
     my $data = {};
 
 
-    my $provider = new FlowProvider($this->{_module});
+    my $provider = new FlowLayout($this->{_module});
     my $container = $provider->get_container($xml);
 
     my $first_child = $container->first_children;

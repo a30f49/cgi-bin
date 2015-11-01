@@ -12,6 +12,8 @@ use XML::Smart;
 
 use Android::Template;
 
+use Plugin::FlowLayout;
+
 sub new{
     my $class = shift;
     my $self = {
@@ -24,59 +26,50 @@ sub new{
 }
 
 ####################
-## get the smart object
+## get the  object
 ####################
-sub get_root{
+sub template_root{
     my ($this, $xml) = @_;
 
-    if( !(-f $xml)){
-        $xml = new Template()->get_xml($xml);
-    }
-    if( !(-f $xml)){
-        print STDERR "xml $xml not exists.\n";
-        return undef;
-    }
-    my $xml_obj = XML::Smart->new($xml);
-    $xml_obj = $xml_obj->cut_root;
+    my $t = new Template();
+    my $template_xml = $t->get_xml($xml);
+    my $mod = $t->module;
 
-    return $xml_obj;
+    my $layout = new FlowLayout($mod, $template_xml);
+    return $layout->get_root;
+}
+
+sub template_container{
+    my ($this, $xml) = @_;
+
+    my $t = new Template();
+    my $template_xml = $t->get_xml($xml);
+    my $mod = $t->module;
+
+    my $layout = new FlowLayout($mod, $template_xml);
+    return $layout->get_container;
 }
 
 sub divider_root{
     my ($this) = @_;
 
     my $divider_xml = 'template_divider';
-    return $this->get_root($divider_xml);
+
+    my $mod = new Template()->module;
+    my $layout = new FlowLayout($mod, $divider_xml);
+
+    return $layout->get_root($divider_xml);
 }
 
 sub divider_group_root{
     my ($this) = @_;
     my $divider_group_xml = 'template_divider_group';
-    return $this->get_root($divider_group_xml);
+
+    my $mod = new Template()->module;
+    my $layout = new FlowLayout($mod, $divider_group_xml);
+
+    return $layout->get_root($divider_group_xml);
 }
 
-
-####################
-## get the tree of smart object
-####################
-sub get_tree{
-    my ($this, $xml) = @_;
-
-    my $xml_obj;
-
-    my $r = ref $xml;
-    if( !($r eq "XML::Smart") ){
-        $xml_obj = $this->get_root($xml);
-        if(!$xml_obj){
-            return undef;
-        }
-    }
-
-    $xml_obj = $xml_obj->base;
-    $xml_obj = $xml_obj->cut_root;
-    delete $xml_obj->{'xmlns:android'};
-    my $root_key = $xml_obj->key;
-    return $xml_obj->tree->{$root_key};
-}
 
 return 1;

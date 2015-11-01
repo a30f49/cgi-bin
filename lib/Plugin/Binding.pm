@@ -5,70 +5,59 @@ use warnings;
 
 use Data::Dumper;
 
-use Plugin::TemplateProvider;
-
 sub new{
     my $class = shift;
     my $self = {
-        _class => shift
     };
     bless $self, $class;
     return $self;
 }
 
-sub class{
-    my $this = shift;
-    return $this->{_class};
+sub bind_test_item{
+    my ($this, $item, $template) = @_;
+
+    my $id = $item->{id};
+    my $title = $item->{title};
+
+    my $child_id = $template->find_child('android:id');
+    $child_id->{'android:id'} = $id;
+
+    my $child_id = $template->find_child('android:id');
+    $child_id->{'android:text'} = $title;
+
+    return $template;
 }
 
-sub get_root{
-    my ($this, $template) = @_;
-
-    my $item_root = $template;
-
-    my $t = ref $template;
-
-    if($t eq "XML::Smart"){
-        $item_root = $template;
-    }else{
-        my $provider = new TemplateProvider();
-        $item_root = $provider->get_root($template);
-    }
-
-    return $item_root;
-}
-
-
+#########################
+### param: cls - class name for field prefix
+#########################
 sub bind_input_item{
-    my ($this, $data, $template) = @_;
-
-    my $container_item = $this->get_root($template);
+    my ($this, $item, $template) = @_;
 
     ## read data
     my $cls = $this->class;
-    my $field = $data->{field}; ## desk:name;
-    my $title = $data->{title};
-    my $hint = $data->{hint};
+    my $field = $item->{field}; ## desk:name;
+    my $title = $item->{title};
+    my $hint = $item->{hint};
     #print "(field,title,hint)=>($field,$title,$hint)\n";
-    my $id = '@+id/'.$cls.'_'.$field;
+    my $id = '@+id/'.$field;
 
     ## set data
-    my $title_view = $container_item->find_child('android:id', 'eq', '@id/title');
+    my $title_view = $template->find_child('android:text');
     if(!$title_view){
-        print STDERR 'fail to find the view with @id/title'."\n";
+        print STDERR 'fail to find the view with \'android:text\''."\n";
     }
     $title_view->{'android:text'} = $title;
-    delete $title_view->{'android:id'};
 
-    my $hint_view = $container_item->find_child('android:id', 'eq', '@id/value');
+    my $hint_view = $template->find_child('android:hint');
     if(!$hint_view){
-        print STDERR 'fail to find the view with @id/value'."\n";
+        print STDERR 'fail to find the view with \'android:hint\''."\n";
     }
     $hint_view->{'android:hint'} = $hint;
     $hint_view->{'android:id'} = $id;
     ## end binding
 
-    return $container_item;
+    return $template;
 }
 
 
