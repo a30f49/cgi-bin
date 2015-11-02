@@ -17,50 +17,74 @@ sub new{
     return $self;
 }
 
-sub gradle{
+######################
+## path to module root #
+#######################
+sub root{
     my ($this) = @_;
     my $module_name = $this->{_module};
     my $gr = new GradleRoot();
     my $module_root = $gr->module_root($module_name);
 
+    return $module_root;
+}
+
+######################
+## path to build.gradle #
+#######################
+sub gradle{
+    my ($this) = @_;
+
+    my $module_root = $this->root;
     return "$module_root/build.gradle";
 }
 
+######################
+## path to AndroidManifest.xml #
+#######################
 sub manifest{
     my ($this) = @_;
 
-    my $module_name = $this->{_module};
-
-    my $gr = new GradleRoot();
-    my $module_root = $gr->module_root($module_name);
+    my $module_root = $this->root;
     my $gradle = new Gradle($module_root);
     my $manifest_relative = $gradle->manifest;
 
-    my $xml_path = new Path($module_root)->with($manifest_relative)->path;
-    return $xml_path;
+    my $path = new Path($module_root)->with($manifest_relative)->path;
+    return $path;
 }
 
-sub xml{
-    my ($this, $xml) = @_;
-    my $module_name = $this->{_module};
 
-    my $gr = new GradleRoot();
-    my $module_root = $gr->module_root($module_name);
+######################
+## path to resource layout #
+#######################
+sub layout{
+    my ($this) = @_;
+
+    my $module_root = $this->root;
     my $gradle = new Gradle($module_root);
 
-    my $xml_relative = $gradle->xml($xml);
-    my $xml_path = new Path($module_root)->with($xml_relative)->path;
-    return $xml_path;
+    my $layout_relative = $gradle->layout;
+    my $path = new Path($module_root)->with($layout_relative)->path;
+    return $path;
 }
 
-sub get_xml{
+######################
+## path to individual xml #
+#######################
+sub xml{
     my ($this, $xml) = @_;
-    return $this->xml($xml);
+
+    my $layout = $this->layout;
+    my $path = new Path($layout)->with($xml)->path;
+    return $path;
 }
 
-sub src{
+
+######################
+## path to individual java #
+#######################
+sub java{
     my ($this, $package, $class) = @_;
-    my $module_name = $this->{_module};
 
     ## package(.) to path(/)
     $package =~ tr/\./\//;
@@ -73,74 +97,16 @@ sub src{
     }
     #print "(package,class)=>($package,$class)\n";
 
-    my $gr = new GradleRoot();
-    my $module_root = $gr->module_root($module_name);
+    my $module_root = $this->root;
     my $gradle = new Gradle($module_root);
 
     my $src = $gradle->src;
 
-    my $xml_path = new Path($module_root)->with($src)->with($package)->with($class)->path;
-    return $xml_path;
+    my $java_path = new Path($module_root)->with($src)->with($package)->with($class)->path;
+    return $java_path;
 }
 
-sub xml_all{
-    my ($this) = @_;
 
-    my $module_name = $this->{_module};
-
-    my $gr = new GradleRoot();
-    my $module_root = $gr->module_root($module_name);
-    my $gradle = new Gradle($module_root);
-    my $layout = $gradle->layout;
-    my $layout_root = "$module_root/$layout_root";
-
-    my $dir = new Dir($layout_root);
-
-    return $dir->files;
-}
-
-my $_fragments;
-sub src_fragments{
-    my ($this) = @_;
-    my $module_name = $this->{_module};
-
-    my $gr = new GradleRoot();
-    my $module_root = $gr->module_root($module_name);
-    my $gradle = new Gradle($module_root);
-
-    my $src_relative = $gradle->src;
-    my $src_path = new Path($module_root)->with($src_relative)->path;
-
-    $_fragments = undef;
-    File::Find::find(\&find_all, $src_path);
-
-    my @list;
-    my @fragments = @{$_fragments};
-
-    for(@fragments){
-        my $full = $_;
-
-        $full =~ s/^$module_root\///;
-        $full =~ s/^$src_relative\///;
-        $full =~ tr/\//\./;
-
-        push(@list, $full);
-    }
-
-    return @list;
-}
-
-sub find_all{
-    if(/Fragment\.java$/){
-        if(/DialogFragment\.java$/){
-            next; #skip dialog fragment
-        }
-
-        if(-f $_){
-            push(@{$_fragments}, File::Spec->rel2abs($_));
-        }
-    }
-}
 
 
 return 1;

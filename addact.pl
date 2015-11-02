@@ -21,91 +21,58 @@ if(! Android::is_android_root){
     exit(0);
 }
 
-sub usage_out{
-    print "Usage:\n";
-    print "  addact <module> <fragment>\n";
-}
-sub usage_in{
-    print "Usage:\n";
-    print "  addact <fragment>\n";
-}
-
 sub usage{
-    if(Android::is_android_pack){
-        usage_out;
-    }elsif(Android::is_android_one){
-        usage_in;
-    }
+    print "Usage:\n";
+    print "  addact <fragment>           -- add activity at local\n";
+    print "  addact <activity> <target>  -- add activity to target module\n";
 }
 
-if(@ARGV == 0){
-my $c= @ARGV;
+my ($param_mod, $param_frag, $param_act, $param_target);
+$param_mod = new Path()->basename;
+
+if(@ARGV==0){
     usage();
     exit(0);
-}
+}elsif(@ARGV==1){
+    $param_frag = shift @ARGV;
 
-my ($param_mod, $param_frag, $test);
-
-## if is android pack
-if(Android::is_android_pack){
-    ($param_mod, $param_frag, $test) = @ARGV;
-
-    if(!$param_mod || !$param_frag){
-        usage_out;
+    if($param_frag !~ /Fragment/){
+        usage;
         exit(0);
     }
 
-}elsif(Android::is_android_one){
-    ($param_frag, $test) = @ARGV;
-     $param_mod = new Path()->basename;
+}elsif(@ARGV==2){
+    $param_act = shift @ARGV;
+    $param_target = shift @ARGV;
 
-     if($test){
-        $param_mod = 'app';
-     }
-
-    if(!$param_frag){
-        usage_in;
+    if(!$param_target){
+        usage;
         exit(0);
     }
 }
 
-## the required param
-if($test){
-    &gen_test;
-}else{
-    #print "(param_mod,param_frag,param_title)=>($param_mod,$param_frag,$param_title)\n";
+if($param_frag){
     &gen_act;
+}else{
+    &copy_act;
+}
+
+sub copy_act{
+    ## TODO,
 }
 
 sub gen_act{
     ## get module pack
+
     my $moduleData = new ModuleContent($param_mod);
     my $target_pack = $moduleData->pack_to_gen;
     #print "target-pack:$target_pack\n";
 
     my $fragment_pack = $moduleData->locate($param_frag);
 
+    ## support
     my $act = new ActivityGenerator($param_mod, $target_pack);
-    if( $act->gen_act_with_fragment($fragment_pack)){
-        my $new_act = $act->new_activity;
-        print "Done...$param_frag=>$new_act\n";
-    }else{
-        print "Pass...$param_frag\n";
-    }
-}
-
-sub gen_test{
-    ## get module pack
-    my $moduleData = new ModuleContent($param_mod);
-    my $target_pack = $moduleData->pack_to_test;
-    #print "target-pack:$target_pack\n";
-
-    my $mod = new Path()->basename;
-    my $mdata = new ModuleContent($mod);
-    my $fragment_pack = $mdata->locate($param_frag);
-
-    my $act = new ActivityGenerator($param_mod, $target_pack);
-    if( $act->gen_test_with_fragment($fragment_pack)){
+    if( $act->gen_act($fragment_pack)){
         my $new_act = $act->new_activity;
         print "Done...$param_frag=>$new_act\n";
     }else{

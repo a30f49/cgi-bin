@@ -17,10 +17,16 @@ sub new{
     return $self;
 }
 
+######################
+## root path
+#######################
 sub root{
     my $this = shift;
     return $this->{_module_root};
 }
+######################
+## root path
+#######################
 sub module_root{
     my $this = shift;
     return $this->{_module_root};
@@ -88,16 +94,6 @@ sub layout{
     return new Path($res)->with("layout")->path;
 }
 
-sub xml{
-    my ($this, $xml_name) = @_;
-    if($xml_name !~ /\.xml$/){
-        $xml_name = $xml_name.".xml";
-    }
-
-    my $layout = $this->layout;
-    return new Path($layout)->with($xml_name)->path;
-}
-
 sub src{
     my ($this) = @_;
     if($this->{_src}){
@@ -113,6 +109,7 @@ sub src{
 
     return $this->{_src} = "src/main/java";
 }
+
 sub assets{
     my ($this) = @_;
     if($this->{_assets}){
@@ -129,6 +126,9 @@ sub assets{
     return $this->{_assets} = "src/main/assets";
 }
 
+################
+## private sub
+####################
 sub _parse{
     my ($this, $module_root) = @_;
 

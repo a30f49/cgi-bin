@@ -7,30 +7,17 @@ sub new{
     my $class = shift;
     my $self = {
         _path => shift,
-        _obj  => undef
+        _the_obj => undef
     };
 
     bless $self, $class;
     return $self;
 }
 
-sub the_obj{
-    my ($this) = @_;
-
-    my $path = $this->{_path};
-    my $xml_obj = $this->{_obj};
-    if(!$xml_obj){
-        $xml_obj = XML::Smart->new($path);
-        $this->{_obj} = $xml_obj;
-    }
-
-    return $xml_obj->cut_root;
-}
-
 sub pack{
     my ($this) = @_;
 
-    my $xml_obj = $this->the_obj;
+    my $xml_obj = $this->_the_obj;
     my $pack = $xml_obj->{'package'};
 
     return $pack;
@@ -39,7 +26,7 @@ sub pack{
 sub activities{
     my ($this) = @_;
 
-    my $xml_obj = $this->the_obj;
+    my $xml_obj = $this->_the_obj;
 
     my @list;
 
@@ -52,19 +39,23 @@ sub activities{
     return @list;
 }
 
-sub dump_activities{
-    my ($this) = @_;
+sub activity_exists{
+    my ($this, $act_name) = @_;
     my @acts = $this->activities;
+
     foreach(@acts){
-        print;
-        print "\n";
+        my $name = $act->{'android:name'};
+        if($act_name eq $name){
+            return 1;
+        }
     }
+    return 0;
 }
 
 sub append_activity_with_name{
     my ($this, $act_name) = @_;
 
-    my $xml_obj = $this->the_obj;
+    my $xml_obj = $this->_the_obj;
     my $app = $xml_obj->{application};
 
     ## find act with name
@@ -80,21 +71,45 @@ sub append_activity_with_name{
     }
 }
 
-sub activity_exists{
-    my ($this, $act_name) = @_;
-
-
-
-}
-
 sub save{
     my ($this, $manifest_path) = @_;
+
     if(!$manifest_path){
         $manifest_path = $this->{_path};
     }
 
-    my $xml_obj = $this->{_obj};
-    $xml_obj->save($manifest_path);
+    $this->_the_obj->save($manifest_path);
+}
+
+
+####################
+## dump     #
+#####################
+sub dump_activities{
+    my ($this) = @_;
+    my @acts = $this->activities;
+    foreach(@acts){
+        print;
+        print "\n";
+    }
+}
+
+####################
+## private sub   #
+#####################
+sub _the_obj{
+    my ($this) = @_;
+
+    my $xml_obj = $this->{_the_obj};
+    if(!$xml_obj){
+        my $path = $this->{_path};
+        $xml_obj = XML::Smart->new($path);
+        $xml_obj = $xml_obj->cut_root;
+
+        $this->{_the_obj} = $xml_obj;
+    }
+
+    return $this->{_the_obj};
 }
 
 return 1;
