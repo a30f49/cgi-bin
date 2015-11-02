@@ -22,8 +22,8 @@ sub bind_test_item{
     my $child_id = $template->find_child('android:id');
     $child_id->{'android:id'} = $id;
 
-    my $child_id = $template->find_child('android:id');
-    $child_id->{'android:text'} = $title;
+    my $child_title = $template->find_child('android:text');
+    $child_title->{'android:text'} = $title;
 
     return $template;
 }

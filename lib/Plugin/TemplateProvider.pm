@@ -31,11 +31,9 @@ sub new{
 sub template_root{
     my ($this, $xml) = @_;
 
-    my $t = new Template();
-    my $template_xml = $t->get_xml($xml);
-    my $mod = $t->module;
+    my $mod = new Template()->module;
+    my $layout = new FlowLayout($mod, $xml);
 
-    my $layout = new FlowLayout($mod, $template_xml);
     return $layout->get_root;
 }
 

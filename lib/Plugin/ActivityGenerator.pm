@@ -27,8 +27,6 @@ use Android::Template;
 use Android::Module;
 use Android::Manifest;
 
-use Plugin::Flow;
-use Plugin::SmartWrapper;
 use Plugin::ModuleContent;
 
 sub new{
@@ -231,7 +229,7 @@ sub gen_act{
     if($overwrite){
         $write_new = 1;
     }elsif(-f $target_path_name){
-        print STDERR "Activity \"$target_path_name\" exists, passed.\n";
+        #print STDERR "Activity \"$target_path_name\" exists, passed.\n";
         $write_new = 0;
     }else{
         $write_new = 1;

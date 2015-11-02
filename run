@@ -1,6 +1,7 @@
-#!/usr/bin/bash
+#!/usr/bin/perl
 
-#echo $(dirname $0)/test.pl
-/usr/bin/perl $(dirname $0)/test.pl
+my $xml = 'test.xml';
 
+my $ref= ref $xml;
 
+print $ref;

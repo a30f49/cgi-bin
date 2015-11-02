@@ -13,30 +13,42 @@ sub new{
     my $class = shift;
     my $self = {
         _container => shift,
-        _divider => undef,
-        _divider_group => undef,
         _container_tree => undef,
+        _divider => undef,
         _divider_tree => undef,
+        _divider_group => undef,
         _divider_group_tree => undef
     };
     bless $self, $class;
 
-    my $container_xml = $self->{_container};
-
     my $provider = new TemplateProvider();
-    $self->{_container} = $provider->get_root($container_xml);
-    $self->{_container} = $self->{_container}->find_child('android:id','eq','@id/container');
-    if(!($self->{_container})){
-        print STDERR 'Stack::Fail to find the child with @id/container';
-    }
-
     $self->{_divider} = $provider->divider_root;
     $self->{_divider_group} = $provider->divider_group_root;
+
+    my $container = $self->{_container};
+
+    my $type = ref $container;
+
+    if(!$type){
+        my $container_xml = $container;
+
+        $container = $provider->template_root($container_xml);
+        if(!($container)){
+            print STDERR "FlowStack::Fail to load template from $container_xml\n";
+        }
+
+        $container = $container->find_child('android:id','eq','@id/container');
+        if(!($container)){
+            print STDERR 'FlowStack::Fail to find the child with @id/container'."\n";
+        }
+
+        $self->{_container} = $container;
+    }
 
     return $self;
 }
 
-sub container_root{
+sub container{
     my ($this) = @_;
 
     my $root = $this->{_container};
@@ -76,8 +88,8 @@ sub container_tree{
         return $this->{_container_tree};
     }
 
-    my $container_root = $this->{_container};
-    my $tree = new Tree($container_root)->tree;
+    my $container = $this->{_container};
+    my $tree = new Tree($container)->tree;
     $this->{_container_tree} = $tree;
 
     return $tree;
@@ -113,13 +125,12 @@ sub divider_group_tree{
 
 sub add_one{
     my ($this, $item_root, $group_start) = @_;
-    #print Dumper($item_root);
 
-    my $item_tree = new Tree($item_root)->root_tree;
+    my $item_tree = new Tree($item_root)->tree;
     my $item_key = $item_root->key;
 
     my $container_tree = $this->container_tree;
-    #print Dumper($container_tree);
+    #print $this->container->data;
 
     my $divider_tree = $this->divider_tree;
     my $divider_key = $this->divider_key;
@@ -133,14 +144,17 @@ sub add_one{
         push (@{$container_tree->{$divider_key}}, $divider_tree);
         push (@{$container_tree->{'/order'}}, $divider_key);
     }
+
     push(@{$container_tree->{$item_key}}, $item_tree);
     push (@{$container_tree->{'/order'}}, $item_key);
+
+    return $this->container;
 }
 
 sub data{
     my ($this) = @_;
 
-    return $this->container_root->data;
+    return $this->container->data;
 }
 
 sub save{
@@ -149,6 +163,5 @@ sub save{
     my $w = new Writer();
     $w->write_new($target, $this->data);
 }
-
 
 return 1;
