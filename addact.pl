@@ -16,19 +16,17 @@ use Plugin::ModuleContent;
 
 #check android area
 my $android = new Android();
-if(! Android::is_android_root){
-    print STDERR "fatal: Not an android repository.\n";
+if(! Android::is_android_one){
+    print STDERR "fatal: Not an android module repository.\n";
     exit(0);
 }
 
 sub usage{
     print "Usage:\n";
-    print "  addact <fragment>           -- add activity at local\n";
-    print "  addact <activity> <target>  -- add activity to target module\n";
+    print "  addact <fragment>    -- add activity at local module\n";
 }
 
-my ($param_mod, $param_frag, $param_act, $param_target);
-$param_mod = new Path()->basename;
+my ($param_frag);
 
 if(@ARGV==0){
     usage();
@@ -37,16 +35,7 @@ if(@ARGV==0){
     $param_frag = shift @ARGV;
 
     if($param_frag !~ /Fragment/){
-        usage;
-        exit(0);
-    }
-
-}elsif(@ARGV==2){
-    $param_act = shift @ARGV;
-    $param_target = shift @ARGV;
-
-    if(!$param_target){
-        usage;
+        print "fatal: not an Fragment to add.\n";
         exit(0);
     }
 }
@@ -57,21 +46,18 @@ if($param_frag){
     &copy_act;
 }
 
-sub copy_act{
-    ## TODO,
-}
-
 sub gen_act{
-    ## get module pack
 
-    my $moduleData = new ModuleContent($param_mod);
-    my $target_pack = $moduleData->pack_to_gen;
-    #print "target-pack:$target_pack\n";
+    my $target_mod = new Path()->basename;
+    my $target_pack = 'gen';
 
-    my $fragment_pack = $moduleData->locate($param_frag);
+    my $mc = new ModuleContent($target_mod);
+    my $fragment_pack = $mc->locate($param_frag);
+    #print $fragment_pack."\n";
+    return;
 
     ## support
-    my $act = new ActivityGenerator($param_mod, $target_pack);
+    my $act = new ActivityGenerator($target_mod, 'gen');
     if( $act->gen_act($fragment_pack)){
         my $new_act = $act->new_activity;
         print "Done...$param_frag=>$new_act\n";

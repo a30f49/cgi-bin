@@ -2,4 +2,6 @@ test.pl
 *.iml
 .idea/
 build/
+run
+run.pl
 

@@ -16,7 +16,9 @@ sub new {
 sub write_new{
     my ($this, $out, $in) = @_;
 
-    if(!$out){
+    ## only one param
+    if(!$in){
+        $in = $out;
         $out = $this->{_out};
     }
 

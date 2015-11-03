@@ -52,113 +52,109 @@ sub pack{
 }
 
 #####################
-## get app package #
+## get package with a short package #
 #####################
-sub pack_to_app{
-    my ($this) = @_;
+sub pack_with{
+    my ($this, $short_pack) = @_;
+    if(!$short_pack){
+        return $this->pack;
+    }
 
     my $pack = $this->pack;
-    return "$pack.app";
+    if($short_pack !~ /^\./){
+        $short_pack = ".$short_pack";
+    }
+    return "$pack$short_pack";
 }
 
 #####################
-## get gen package #
+## cut the root package for a given package #
+## and return the short package
 #####################
-sub pack_to_gen{
-    my ($this) = @_;
+sub pack_cut{
+    my ($this, $pack) = @_;
 
-    my $pack = $this->pack;
-    return "$pack.gen";
+    my $p = $this->pack;
+
+    $pack =~ s/$p//;
+    return $pack;
+}
+
+#########################
+## get package from path #
+#########################
+sub pack_from_path{
+    my ($this, $path) = @_;
+
+    my $mod = $this->{_module};
+    my $module = new Module($mod);
+
+    my $cut = $module->src;
+
+    my $pack = $path;
+    $pack =~ s/\.java//;  ## cut java
+    $pack =~ s/$cut//;    ## cut path
+    $pack =~ tr/\//\./;
+    $pack =~ s/^\.//;
+
+    return $pack;
 }
 
 #####################
-## get test package #
-#####################
-sub pack_to_test{
-    my ($this) = @_;
-
-    my $pack = $this->pack;
-    return "$pack.test";
-}
-
-#####################
-## get path to the package #
+## return the path to the package #
 #####################
 sub path_to_pack{
-    my ($this) = @_;
-    my $mod = $this->{_module};
-
-    my $gr = new GradleRoot();
-    my $mod_root = $gr->module_root($mod);
-    my $gradle = new Gradle($mod_root);
-
-    my $src = $gradle->src;
-    my $src_path = "$mod_root/$src";
-
-    my $path  = $this->pack;
-    $path =~ tr/\./\//;
-
-    $path = "$src_path/$path";
-
-    return $path;
-}
-
-#####################
-## get path to the app package #
-#####################
-sub path_to_app{
-    my ($this) = @_;
-    my $path = $this->path_to_pack;
-
-    return "$path/app";
-}
-
-#####################
-## convert package to path #
-#####################
-sub pack_to_path{
     my ($this, $pack) = @_;
+    if(!$pack){
+        $pack = $this->pack;
+    }else{
+        ## means short pack
+        if($pack =~ /^\.*\w+$/){
+            $pack = $this->pack_with($pack);
+        }
+    }
+
+    ## get root path
     my $mod = $this->{_module};
+    my $module  = new Module($mod);
+    my $src_path = $module->src;
 
-    my $gr = new GradleRoot();
-    my $mod_root = $gr->module_root($mod);
-    my $gradle = new Gradle($mod_root);
-
-    my $src = $gradle->src;
-    my $src_path = "$mod_root/$src";
-
+    ## convert pack to path
     my $path  = $pack;
     $path =~ tr/\./\//;
-
     $path = "$src_path/$path";
 
     return $path;
 }
-
 
 #######################
 ## locate fragment package
 ######################
 sub locate{
-    my ($this, $frag) = @_;
+    my ($this, $java, $short_pack) = @_;
+    $java =~ s/\.java$//;
+    $java = "$java.java";
 
-    my $mod = $this->{_module};
+    my $pack = $this->pack_with($short_pack);
+    my $pack_path = $this->path_to_pack($pack);
+    my $java_path = "$pack_path/$java";
 
-    my $pack_path = $this->path_to_pack;
-    my $app_path = $this->path_to_app;
-    my $manifest_pack = $this->pack;
-    my $app_pack = $this->pack_to_app;
+    return $java_path;
+}
 
-    if(-f "$pack_path/$frag.java"){
-        return "$manifest_pack.$frag";
-    }elsif(-f "$app_path/$frag.java"){
-        return "$app_pack.$frag";
+sub locate_verify{
+    my ($this, $java, $short_pack) = @_;
+
+    my $java_path = $this->locate($java, $short_pack);
+
+    if(!(-f $java_path)){
+        print STDERR "$java_path not exists\n";
+        return undef;
     }
 
-    print STDERR "ModuleContent: fail to locate $frag\n";
-
-    return undef;
+    return $java_path;
 }
+
 
 
 return 1;

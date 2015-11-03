@@ -53,6 +53,33 @@ sub manifest{
     return $path;
 }
 
+######################
+## path to src #
+#######################
+sub src{
+    my ($this) = @_;
+
+    my $module_root = $this->root;
+    my $gradle = new Gradle($module_root);
+
+    my $src_relative = $gradle->src;
+    my $path = new Path($module_root)->with($src_relative)->path;
+    return $path;
+}
+
+######################
+## path to res #
+#######################
+sub res{
+    my ($this) = @_;
+
+    my $module_root = $this->root;
+    my $gradle = new Gradle($module_root);
+
+    my $res_relative = $gradle->res;
+    my $path = new Path($module_root)->with($res_relative)->path;
+    return $path;
+}
 
 ######################
 ## path to resource layout #
@@ -78,35 +105,5 @@ sub xml{
     my $path = new Path($layout)->with($xml)->path;
     return $path;
 }
-
-
-######################
-## path to individual java #
-#######################
-sub java{
-    my ($this, $package, $class) = @_;
-
-    ## package(.) to path(/)
-    $package =~ tr/\./\//;
-    if(!$class){
-        $package =~ s/\.java$//;
-        $package = $package.".java";
-    }else{
-        $class =~ s/\.java$//;
-        $class = $class.".java";
-    }
-    #print "(package,class)=>($package,$class)\n";
-
-    my $module_root = $this->root;
-    my $gradle = new Gradle($module_root);
-
-    my $src = $gradle->src;
-
-    my $java_path = new Path($module_root)->with($src)->with($package)->with($class)->path;
-    return $java_path;
-}
-
-
-
 
 return 1;
