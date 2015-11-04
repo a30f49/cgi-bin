@@ -14,6 +14,12 @@ sub new{
     return $self;
 }
 
+sub data{
+    my ($this) = @_;
+
+    return $this->{_content};
+}
+
 sub package_line{
     my ($this) = @_;
 
@@ -34,6 +40,31 @@ sub R_line{
     return $this->{_R};
 }
 
+sub replace_R_with_package{
+    my ($this, $pack) = @_;
+
+    my $data = $this->{_content};
+    $data =~ /\wmport\s+([\w\.]+)\.R;/;
+
+    if($1){
+
+        my $line0 = "import $1.R;";
+        my $line1 = "import $pack.R;";
+
+        if($line0 ne $line1){
+
+            print "line0: $line0\n";
+            print "line1: $line1\n";
+
+            $data =~ s/$line0/$line1/;
+            $this->{_content} = $data;
+
+            return 1;
+        }
+    }
+
+    return 0;
+}
 
 sub _parse{
     my ($this) = @_;
