@@ -30,14 +30,14 @@ if(! Android::is_android_one){
 
 sub usage{
     print "Usage:\n";
-    print "  addnew <model> <field,field2...> <type>\n";
+    print "  addfield <model> <field,field2...> <type>\n";
     print "    params\n";
-    print "      model   -- the model name. e.g. user\n";
-    print "      field   -- the field of the model. e.g. name\n";
-    print "      type    -- specific the input type of the field\n";
-    print "         --input    -- single input type\n";
-    print "         --next     -- next to select the value\n";
-    print "         --option   -- select option in below bar\n";
+    print "      model    -- the model name. e.g. user\n";
+    print "      field    -- the field of the model. e.g. name\n";
+    print "      type     -- specific the input type of the field\n";
+    print "          --input    -- single input type\n";
+    print "          --next     -- next to select the value\n";
+    print "          --option   -- select option in below bar\n";
 }
 
 if(@ARGV < 2){
@@ -57,7 +57,7 @@ if(!$type){
 }
 $type =~ s/^--//;
 
-my $fragment = &build_fragment_new_layout($model, $domain);
+my $fragment = &build_fragment_show_layout($model, $domain);
 
 my $module = new Module($basename);
 my $fragment_path = $module->xml($fragment);
@@ -65,7 +65,7 @@ $fragment_path =~ s/\.xml//;
 $fragment_path = "$fragment_path"."_smart.xml";
 
 if(!(-f $fragment_path)){
-    &create_fragment_new_layout($fragment_path);
+    &create_fragment_show_layout($fragment_path);
 }
 
 ## add fields
@@ -83,7 +83,7 @@ foreach(@fields){
     my $template = $template_origin->copy;
 
     ## binding
-    my $item = &build_new_hash($domain,$model,$field);
+    my $item = &build_field_hash($domain,$model,$field);
 
     my $binding = new Binding();
     my $item_root = $binding->bind_input_item($item, $template);
@@ -105,31 +105,31 @@ print $fragment. "\n";
 ##
 ## sub func
 ##
-sub create_fragment_new_layout{
+sub create_fragment_show_layout{
     my ($target) = @_;
 
     my $tp = new TemplateProvider();
-    my $layout = $tp->template_root('template_form_new_container.xml');
+    my $layout = $tp->template_root('template_form_save_container.xml');
 
     my $w= new Writer($target);
     $w->write_new($layout->data);
 
 }
 
-sub build_fragment_new_layout{
+sub build_fragment_show_layout{
     my ($model, $domain) = @_;
 
     my $fragment;
     if($domain){
-        $fragment = "fragment_".$domain."_new_"."$model.xml";
+        $fragment = "fragment_".$domain."_show_"."$model.xml";
     }else{
-        $fragment = "fragment_new_"."$model.xml";
+        $fragment = "fragment_show_"."$model.xml";
     }
 
     return $fragment;
 }
 
-sub build_new_hash{
+sub build_field_hash{
     my ($domain, $model, $field) = @_;
 
     my $hash = {};
@@ -139,13 +139,3 @@ sub build_new_hash{
 
     return $hash;
 }
-
-
-
-
-
-
-
-
-
-

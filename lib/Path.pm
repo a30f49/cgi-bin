@@ -18,21 +18,22 @@ sub new{
 }
 
 sub root{
-    my $this = shift;
+    my ($this) = @_;
     return $this->{_root};
 }
 
 sub path{
-    my $this = shift;
+    my ($this) = @_;
     return $this->{_root};
 }
 
 sub basename{
-    my $this = shift;
+    my ($this) = @_;
     my $path = $this->{_root};
 
     $path =~ /.+\/(.+)$/;
-    return $1;
+    $path = $1;
+    return $path;
 }
 
 sub parent{
