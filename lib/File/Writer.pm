@@ -15,9 +15,10 @@ sub new {
 ## else append data to end
 sub write_new{
     my ($this, $out, $in) = @_;
+    #print "(in,out)=>($in, $out)\n";
 
     ## only one param
-    if(!$in){
+    if(!$in or $in==1){
         $in = $out;
         $out = $this->{_out};
     }

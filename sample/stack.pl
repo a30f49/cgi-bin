@@ -35,7 +35,7 @@ my $items =
  ];
 my @list = @{$items};
 
-my $binding = new Binding("asset");
+my $binding = new Binding();
 my $stack = new Stack('template_input_container');
 
 foreach(@list){

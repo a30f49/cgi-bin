@@ -13,6 +13,9 @@ sub new{
     return $self;
 }
 
+#########################
+## bind test item for single page test #
+#########################
 sub bind_test_item{
     my ($this, $item, $template) = @_;
 
@@ -29,32 +32,31 @@ sub bind_test_item{
 }
 
 #########################
-### param: cls - class name for field prefix
+## bind input item for form #
 #########################
 sub bind_input_item{
     my ($this, $item, $template) = @_;
 
     ## read data
-    my $cls = $this->class;
-    my $field = $item->{field}; ## desk:name;
+    my $id = $item->{id}; ## desk:name;
     my $title = $item->{title};
     my $hint = $item->{hint};
-    #print "(field,title,hint)=>($field,$title,$hint)\n";
-    my $id = '@+id/'.$field;
+    #print "(id,title,hint)=>($id,$title,$hint)\n";
 
     ## set data
-    my $title_view = $template->find_child('android:text');
+    my $title_view = $template->find_child('android:id','eq', '@id/title');
     if(!$title_view){
-        print STDERR 'fail to find the view with \'android:text\''."\n";
+        print STDERR 'fail to find the view with \'@id/title\''."\n";
     }
     $title_view->{'android:text'} = $title;
+    delete $title_view->{'android:id'};
 
-    my $hint_view = $template->find_child('android:hint');
-    if(!$hint_view){
-        print STDERR 'fail to find the view with \'android:hint\''."\n";
+    my $field_view = $template->find_child('android:id', 'eq', '@id/value');
+    if(!$field_view){
+        print STDERR 'fail to find the view with \'@id/value\''."\n";
     }
-    $hint_view->{'android:hint'} = $hint;
-    $hint_view->{'android:id'} = $id;
+    $field_view->{'android:hint'} = $hint;
+    $field_view->{'android:id'} = $id;
     ## end binding
 
     return $template;

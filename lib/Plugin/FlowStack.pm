@@ -130,12 +130,12 @@ sub add_one{
     my $item_key = $item_root->key;
 
     my $container_tree = $this->container_tree;
-    #print $this->container->data;
 
     my $divider_tree = $this->divider_tree;
     my $divider_key = $this->divider_key;
     my $divider_group_tree = $this->divider_group_tree;
     my $divider_group_key = $this->divider_group_key;
+    #print Dumper($container_tree);
 
     if($group_start){
         push (@{$container_tree->{$divider_group_key}}, $divider_group_tree);
