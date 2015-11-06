@@ -73,13 +73,18 @@ sub gen_test{
     $mc->module($mod);
 
     ## from fragment package
-    my $fragment_pack = $mc->locate($param_frag);
-    print "$fragment_pack\n";
-
+    my $fragment_path = $mc->locate($param_frag);
+    if(!(-f $fragment_path)){
+        $fragment_path = $mc->locate($param_frag, 'app');
+    }
+    if(!(-f $fragment_path)){
+        print STDERR "fatal: $fragment_path not exists.\n";
+    }
+    print "$fragment_path\n";
 
     ## gen activity java class
-    my $act = new ActivityGenerator($target_mod, $target_pack);
-    if( $act->gen_act($fragment_pack, $test, $overwrite)){
+    my $act = new ActivityGenerator($target_mod, $fragment_path);
+    if( $act->gen_act($fragment_path, $test, $overwrite)){
         $done = 1;
     }else{
         $done = 0;
@@ -108,7 +113,8 @@ sub gen_test{
     #print $stack->data;
 
     my $mt = new ModuleTarget('app', 'fragment_unit_test.xml');
-    $stack->save($mt->target);
+    $mt->save($stack->data);
+
 
     ### print result
     my $new_act = $act->new_activity;

@@ -47,7 +47,9 @@ sub new{
 sub save{
     my ($this, $data)  = @_;
 
-    my $target_xml = $this->_get_target_xml;
+    my $target_xml = $this->{_target};
+    my $module = new Module($this->{_module});
+    $target_xml = $module->xml($target_xml);
 
     my $w = new Writer();
     $w->write_new($target_xml, $data);
@@ -126,7 +128,7 @@ sub copy_from{
 
     ## try to modify the package of the target class
     my $java_pack = $to_mc->pack_from_path($to_java);
-    if(!$this->correct_package($java_pack)){
+    if(!$this->_correct_package($java_pack)){
         return 0;
     }
 
@@ -140,11 +142,13 @@ sub copy_from{
     }
 }
 
+
+
 ############################
 ## correct the package in the class file #
-## param: target   -- target class file
+## param: target  -- target class file
 ##########################
-sub correct_package{
+sub _correct_package{
     my ($this, $target) = @_;
     my $java_pack = $target;
 

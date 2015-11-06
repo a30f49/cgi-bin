@@ -146,7 +146,7 @@ sub gen_act{
     #print "target activity: $target_act_long\n";
 
     my $mc = new ModuleContent($this->target_module);
-    my $target_path = $mc->pack_to_path($target_act_long);
+    my $target_path = $mc->path_to_pack($target_act_long);
     my $target_manifest_pack = $mc->pack;
     my $target_path_name = "$target_path.java";
     #print "target activity: $target_path\n";

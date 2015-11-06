@@ -23,10 +23,14 @@ if(! Android::is_android_one){
 
 sub usage{
     print "Usage:\n";
-    print "  addact <fragment>    -- add activity at local module\n";
+    print "  addact <fragment> <target> <pack>  -- add activity at local module\n";
+    print "     params:\n";
+    print "        fragment       -- the fragment to be add\n";
+    print "        target         -- the target module to add to\n";
+    print "        pack           -- the short pack to add to \n";
 }
 
-my ($param_frag);
+my ($param_frag, $param_target, $param_short_pack);
 
 if(@ARGV==0){
     usage();
@@ -47,7 +51,6 @@ if($param_frag){
 }
 
 sub gen_act{
-
     my $target_mod = new Path()->basename;
     my $target_pack = 'gen';
 

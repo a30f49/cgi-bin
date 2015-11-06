@@ -24,8 +24,8 @@ if(! Android::is_android_root){
 
 sub usage{
     print "Usage:\n";
-    print "  modapp -t <appname>\n";
-    print "     option: -t       #update app name\n";
+    print "  modch -n <app-name>\n";
+    print "     option: -n       #change app name\n";
 }
 
 if(@ARGV==0){
@@ -39,7 +39,7 @@ while(@ARGV){
    $op = shift @ARGV;
    #print "$op\n";
    
-   if($op eq '-t'){
+   if($op eq '-n'){
        my $title = shift @ARGV;
        if($title){
            &change_app_title($title);
@@ -64,7 +64,6 @@ sub change_app_title{
 
    ## change app name in build.gradle
    &change_gradle_title($gradle_path, $title);
-
 
 }
 
