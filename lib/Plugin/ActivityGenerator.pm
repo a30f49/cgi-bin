@@ -2,7 +2,7 @@ package ActivityGenerator;
 =head1
     params:
         app  - target module
-        test - target package with short name
+        test - target short pack
 
     my $act = new ActivityGenerator("app", "test");  ## test - short package
     $act->gen_act("com.jfeat.modules.dummy.DummyFragment");
@@ -34,12 +34,11 @@ sub new{
     my $self = {
         _target_module  => shift,
         _target_package => shift,
-        _activity => undef
+        _new_activity => undef
     };
     bless $self, $class;
 
     ## reset target package
-
     return $self;
 }
 
@@ -51,69 +50,21 @@ sub target_module{
    return $this->{_target_module};
 }
 
+#########################
+## the short package  #
+#######################
 sub target_package{
     my ($this, $pack) = @_;
     if($pack){
         $this->{_target_package} = $pack;
     }
-
-    ## short package, to get full package
-    if($this->{_target_package} =~ /^\w+$/){
-        $pack = $this->{_target_package};
-
-        my $mc = new ModuleContent($this->target_module);
-
-        my $manifest_pack = $mc->pack;
-        $pack = "$manifest_pack.$pack";
-        $this->{_target_package} = $pack;
-
-        ## make dir of full package
-        my $dir = $mc->pack_to_path($pack);
-        if(-d $dir){
-        }else{
-            mkdir($dir);
-        }
-
-        if(-d $dir){
-        }else{
-            print STDERR "ActivityGenerator: fail to mkdir - $dir\n";
-        }
-    }
-
     return $this->{_target_package};
 }
 
 sub new_activity{
     my ($this) = @_;
-    return $this->{_activity};
+    return $this->{_new_activity};
 }
-
-sub gen_raw{
-    my ($this) = @_;
-    my $act  = $this->new_activity;
-    $act =~ s/ForTest$//;
-    $act =~ /(\w+)$/;
-    $act = $1;
-
-    $act =~ /([A-Z][a-z0-9]+)([A-Z][a-z0-9]+)*Activity/;
-    #print "(act, 1,2)=>($act, $1, $2)\n";
-
-    my $id = '@+id/action_';
-    $id = "$id$1";
-    if($2){
-        $id = $id."_".$2;
-    }
-    $id =~ tr/[A-Z]/[a-z]/;
-
-    $act =~ s/Activity/Fragment/;
-
-    my $raw_item = {};
-    $raw_item->{id} = $id;
-    $raw_item->{title} = $act;
-
-    return $raw_item;
-}
-
 
 #####################
 ## Gen new activity for fragment #
@@ -127,16 +78,13 @@ sub gen_act{
         return;
     }
 
-
     my ($pack, $frag, $frag_prefix) = parse_fragment_pack($fragment);
     #print "(fragment, pack,frag, prefix)=>($fragment, $pack, $frag, $frag_prefix)\n";
 
     ## activity target package
-    my $target_pack = $this->target_package;
-    if(!$target_pack){
-        ## of fragment package
-        $target_pack = $pack;
-    }
+    my $target_pack = $this->build_target_package;
+    #print "target_pack: $target_pack\n";
+
     ## activity target name
     my $target_act = $frag_prefix."Activity";
     if($test){
@@ -149,7 +97,7 @@ sub gen_act{
     my $target_path = $mc->path_to_pack($target_act_long);
     my $target_manifest_pack = $mc->pack;
     my $target_path_name = "$target_path.java";
-    #print "target activity: $target_path\n";
+    #print "target activity: $target_path_name\n";
 
     ## get src
     my $template = new Template();
@@ -246,7 +194,7 @@ sub gen_act{
     #print "(act_pack,manifest_pack)=>($target_act_long,$target_manifest_pack)\n";
     $activity_pack_relative =~ s/$target_manifest_pack//;
     #print "activity_pack_relative:$activity_pack_relative\n";
-    $this->{_activity} = $activity_pack_relative;
+    $this->{_new_activity} = $activity_pack_relative;
 
     ## manifest
     if($write_new){
@@ -274,5 +222,56 @@ sub parse_fragment_pack{
 
     return ($fragment_pack, $fragment_name, $fragment_prefix);
 }
+
+sub build_target_package{
+    my ($this) = @_;
+
+    my $target = $this->target_module;
+    my $short_pack = $this->target_package;
+
+    my $mc = new ModuleContent($target);
+    my $pack = $mc->pack_with($short_pack);
+
+    ## make dir of full package
+    my $dir = $mc->path_to_pack($pack);
+    if(-d $dir){
+    }else{
+       mkdir($dir);
+    }
+
+    if(-d $dir){
+    }else{
+        print STDERR "ActivityGenerator: fail to mkdir - $dir\n";
+    }
+
+    return $pack;
+}
+
+sub gen_raw{
+    my ($this) = @_;
+    my $act  = $this->new_activity;
+    $act =~ s/ForTest$//;
+    $act =~ /(\w+)$/;
+    $act = $1;
+
+    $act =~ /([A-Z][a-z0-9]+)([A-Z][a-z0-9]+)*Activity/;
+    #print "(act, 1,2)=>($act, $1, $2)\n";
+
+    my $id = '@+id/action_';
+    $id = "$id$1";
+    if($2){
+        $id = $id."_".$2;
+    }
+    $id =~ tr/[A-Z]/[a-z]/;
+
+    $act =~ s/Activity/Fragment/;
+
+    my $raw_item = {};
+    $raw_item->{id} = $id;
+    $raw_item->{title} = $act;
+
+    return $raw_item;
+}
+
 
 return 1;

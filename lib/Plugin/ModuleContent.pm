@@ -142,13 +142,23 @@ sub locate{
     return $java_path;
 }
 
+sub locate_both{
+    my ($this, $java, $short_pack) = @_;
+    my $located = $this->locate_verify($java);
+    if(!$located){
+        $located = $this->locate_verify($java, 'app');
+    }
+
+    return $located;
+}
+
 sub locate_verify{
     my ($this, $java, $short_pack) = @_;
 
     my $java_path = $this->locate($java, $short_pack);
 
     if(!(-f $java_path)){
-        print STDERR "$java_path not exists\n";
+        #print STDERR "$java_path not exists\n";
         return undef;
     }
 

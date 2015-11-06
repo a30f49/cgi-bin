@@ -20,6 +20,10 @@ if(! Android::is_android_one){
     print STDERR "fatal: Not an android module repository.\n";
     exit(0);
 }
+if(@ARGV==0){
+    &usage();
+    exit(0);
+}
 
 sub usage{
     print "Usage:\n";
@@ -30,42 +34,37 @@ sub usage{
     print "        pack           -- the short pack to add to \n";
 }
 
-my ($param_frag, $param_target, $param_short_pack);
+my ($param_frag, $param_target, $param_short_pack) = @ARGV;
+my $local = (!$param_target);
 
-if(@ARGV==0){
-    usage();
+if($param_frag !~ /Fragment/){
+    print "fatal: not an Fragment to add.\n";
     exit(0);
-}elsif(@ARGV==1){
-    $param_frag = shift @ARGV;
-
-    if($param_frag !~ /Fragment/){
-        print "fatal: not an Fragment to add.\n";
-        exit(0);
-    }
+}
+## target not specific, gen at local module
+if($local){
+    $param_target =  new Path()->basename;
 }
 
-if($param_frag){
-    &gen_act;
+## get fragment package
+my $mc = new ModuleContent(new Path()->basename);
+my $path = $mc->locate_both($param_frag);
+if(!$path){
+    print STDERR "fetal: $path not exists\n";
+    exit(0);
+}
+my $fragment_pack = $mc->pack_from_path($path);
+if($local){
+    $param_short_pack = $mc->pack_cut($fragment_pack);
+}
+
+## support
+my $act = new ActivityGenerator($param_target, $param_short_pack);
+#print $param_target.",".$param_short_pack."\n";
+if( $act->gen_act($fragment_pack)){
+    my $new_act = $act->new_activity;
+    print "Done...$param_frag=>$new_act\n";
 }else{
-    &copy_act;
-}
-
-sub gen_act{
-    my $target_mod = new Path()->basename;
-    my $target_pack = 'gen';
-
-    my $mc = new ModuleContent($target_mod);
-    my $fragment_pack = $mc->locate($param_frag);
-    #print $fragment_pack."\n";
-    return;
-
-    ## support
-    my $act = new ActivityGenerator($target_mod, 'gen');
-    if( $act->gen_act($fragment_pack)){
-        my $new_act = $act->new_activity;
-        print "Done...$param_frag=>$new_act\n";
-    }else{
-        print "Pass...$param_frag\n";
-    }
+    print "Pass...$param_frag\n";
 }
 
