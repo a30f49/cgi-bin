@@ -13,181 +13,118 @@ use warnings;
 use JSON;
 use File::Spec;
 use File::Copy;
+use Path;
 
 use Android;
 
-use Plugin::ActivityGenerator;
 use Plugin::ModuleContent;
 use Plugin::ModuleTarget;
 
 #check android area
 my $android = new Android();
-if(! Android::is_android_root){
-    print STDERR "fatal: Not an android repository.\n";
-    exit(0);
-}
-
 if(! Android::is_android_one){
     print STDERR "fatal: Not an android module.\n";
     exit(0);
 }
 
+my $overwrite = 0;
+
 sub usage{
     print "Usage:\n";
-    print "  modcp <options> [which] [target] [-f]\n";
-    print "     options -f        -- list fragments\n";
-    print "             -a        -- list activities\n";
-    print "             -x        -- list xml layouts\n";
-    print "     which        -- copy which xml\n";
-    print "     target       -- copy to target module\n";
-    print "     -f           -- force overwrite if exists at target side.\n";
+    print "  modcp <which> <where> <target> <where-to> [options]\n";
+    print "     which       -- copy which java file\n";
+    print "     where       -- short package where java file copy from.\n";
+    print "     target      -- copy to the target module\n";
+    print "     where-to    -- short package where java file copy to.\n";
+    print "     options:\n";
+    print "         -a      -- copy type of activity.\n";
+    print "         -x      -- copy type of layout(xml).\n";
 }
 
-my $op = shift @ARGV;
+if(@ARGV < 4){
+    usage;
+    exit(0);
+}
 
-my ($which, $target, $overwrite);
-$which = shift @ARGV;
-$target =  shift @ARGV;
-$overwrite = shift @ARGV;
+my ($which, $which_pack, $target, $target_pack, $op) = @ARGV;
+#print "($which, $which_pack, $target, $target_pack, $op)\n";
 
 if(!$op){
-    usage;
-    exit(0);
-}
-if($op eq '-h'){
-    usage;
-    exit(0);
-}
-
-if($op eq '-f'){
-    &list_all_fragments;
+    &java_copy($which, $which_pack, $target, $target_pack);
+}elsif($op eq '-x'){
+    if($which_pack ne '.'){
+        print STDERR "fetal: <where> param must be \'.\', but $which_pack\n";
+        exit(0);
+    }
+    if($target_pack ne '.'){
+            print STDERR "fetal: <where-to> param must be \'.\', but $target_pack\n";
+            exit(0);
+    }
+    &layout_copy($which, $target);
+    print "Done...$which\n";
 
 }elsif($op eq '-a'){
-    if(!$which){
-       &list_all_activities;
-       exit(0);
-    }
-    if(!$target){
-        usage;
-        exit(0);
-    }
+    my $pass = &activity_copy($which, $which_pack, $target, $target_pack);
 
-    ## copy which java to target module
-    my $mod = new Path()->basename;
-    my $mc = new ModuleContent($mod);
-    my $java_path = $mc->locate($which);
-    if(!(-f $java_path)){
-        $java_path = $mc->locate($which, 'app');
-    }
-    if(!(-f $java_path)){
-        print STDERR "$which not exist\n";
-        exit(0);
-    }
-
-    my $java_pack = $mc->pack_from_path($java_path);
-
-    my $short_pack = $mc->pack_cut($java_pack);
-    $short_pack =~ s/\.$which//;
-
-    my $mt = new ModuleTarget($target, $short_pack);
-    if($mt->copy_from($mod, $which, $short_pack, $overwrite)){
+    if($pass){
         print "Done...$which\n";
     }else{
         print "Pass...$which\n";
     }
 }
-elsif($op eq '-x'){
-    if(!$which){
-        &list_all_layouts;
-        exit(0);
+
+
+
+## --
+## the end
+
+sub activity_copy{
+    my ($which, $which_pack, $target, $target_pack) = @_;
+    #print "($which, $which_pack, $target, $target_pack)\n";
+
+    my $which_mod = new Path()->basename;
+    my $which_mc = new ModuleContent($which_mod);
+    my $which_path;
+    if($which_pack eq '.'){
+        ## means locate auto
+        $which_path = $which_mc->locate_auto($which);
+    }else{
+        $which_path = $which_mc->locate_verify($which, $which_pack);
     }
-    if(!$target){
-        usage;
-        exit(0);
+    if(!$which_path){
+        print STDERR "fetal: $which_path not exists\n";
+        return 0;
+    }
+    my ($p,$s) = $which_mc->pack_from_path($which_path);
+    $which_pack = $s;
+
+    ## copy to target
+    my $mt = new ModuleTarget($target, $target_pack);
+    my $pass = $mt->copy_from($which_mod, $which, $which_pack, $overwrite);
+    if(!$pass){
+        print STDERR "fetal: fail to copy $which\n";
+        return 0;
     }
 
-    ## copy which xml to target module
-    my $mod = new Path()->basename;
+    ## copy activity layout within java class
+
+}
+
+sub layout_copy{
+    my ($which_xml, $target)= @_;
+
+    my $which_mod = new Path()->basename;
+
     my $mt = new ModuleTarget($target);
-    $mt->copy_layout($mod, $which, $overwrite) or die "Copy failed: $!";
-
-    print "Done...$which\n";
-
-}else{
-    usage;
-    exit(0);
+    $mt->copy_from_layout($which_mod, $which_xml, $overwrite) or die "Copy failed: $!";
 }
 
-sub list_all_layouts{
+sub java_copy{
     my $mod = new Path()->basename;
-
-    my $layout = new Module($mod)->layout;
-
-    my $dir= new Dir($layout);
-    my @list = $dir->files;
-
-     foreach(@list){
-        print;
-        print "\n";
-     }
-}
-
-sub list_all_fragments{
-    &list_all_fragments_and_activities;
-}
-
-sub list_all_activities{
-    &list_all_fragments_and_activities;
-}
-
-sub list_all_fragments_and_activities{
-    my $mod = new Path()->basename;
-
-    my $mc = new ModuleContent($mod);
-
-    my $app_pack = $mc->pack_with('app');
-    my $app_path = $mc->path_to_pack($app_pack);
-    my $pack_path = $mc->path_to_pack;
-    #print "(app_path,pack_path)=>($app_path,$pack_path)\n";
-    if(!(-e $pack_path)){
-        print STDERR "path to src package not exists\n";
-        return;
-    }
-
-    if( (-d $app_path) ){
-        dump_dir($app_path, 'app');
-    }
-    if( (-d $pack_path) ){
-        dump_dir($pack_path);
-    }
-}
-
-sub dump_dir{
-    my ($path, $short_path) = @_;
-
-    my $dir= new Dir($path);
-    my @list = $dir->files;
-
-    foreach(@list){
-        s/\.java$//;
-
-        my $match = 0;
-
-        if($op eq '-a' && /Activity$/){
-            $match = 1;
-        }elsif($op eq '-f' and /Fragment$/){
-            $match = 1;
-        }
-
-        if($match){
-            ## append short path: 'app' etc.
-           if($short_path){
-               print $short_path;
-               print "/";
-           }
-
-           print;
-           print "\n";
-        }
+    my $mc_from = new ModuleContent($mod);
+    my $from_path = $mc_from->locate_verify($which, $which_pack);
+    if(!$from_path){
+        print  STDERR "fetal: $from_path not exists\n";
+        return 0;
     }
 }

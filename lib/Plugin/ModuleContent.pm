@@ -59,6 +59,9 @@ sub pack_with{
     if(!$short_pack){
         return $this->pack;
     }
+    if($short_pack =~ /^\.$/){
+       return $this->pack;
+    }
 
     my $pack = $this->pack;
     if($short_pack !~ /^\./){
@@ -82,23 +85,84 @@ sub pack_cut{
 
 #########################
 ## get package from path #
+## RETURN : (pack and its short pack)
 #########################
-sub pack_from_path{
+sub packs_from_path{
     my ($this, $path) = @_;
 
     my $mod = $this->{_module};
     my $module = new Module($mod);
 
     my $cut = $module->src;
-
     my $pack = $path;
-    $pack =~ s/\.java//;  ## cut java
     $pack =~ s/$cut//;    ## cut path
+
+    my $with_java = 0;
+    if($pack =~ /\.java/){
+        $with_java = 1;
+    }
+
+    $pack =~ s/\.java//;  ## cut java
     $pack =~ tr/\//\./;
     $pack =~ s/^\.//;
 
+    my $short_pack = $this->pack_cut($pack);
+
+    if($with_java){
+        $short_pack =~ s/\.\w+$//;
+    }
+
+    return ($pack, $short_pack);
+}
+
+sub pack_from_path{
+    my ($this, $path) = @_;
+    my ($pack, $short_pack) = $this->packs_from_path($path);
     return $pack;
 }
+
+#######################
+## locate fragment package
+######################
+sub locate{
+    my ($this, $java, $short_pack) = @_;
+    $java =~ s/\.java$//;
+    $java = "$java.java";
+
+    my $pack = $this->pack_with($short_pack);
+    my $pack_path = $this->path_to_pack($pack);
+    my $java_path = "$pack_path/$java";
+
+    return $java_path;
+}
+
+sub locate_verify{
+    my ($this, $java, $short_pack) = @_;
+
+    my $java_path = $this->locate($java, $short_pack);
+
+    if(!(-f $java_path)){
+        #print STDERR "$java_path not exists\n";
+        return undef;
+    }
+
+    return $java_path;
+}
+
+
+#######################
+## locate fragment/activity within pack and pack.app #
+######################
+sub locate_auto{
+    my ($this, $java) = @_;
+    my $located = $this->locate_verify($java);
+    if(!$located){
+        $located = $this->locate_verify($java, 'app');
+    }
+
+    return $located;
+}
+
 
 #####################
 ## return the path to the package #
@@ -126,45 +190,6 @@ sub path_to_pack{
 
     return $path;
 }
-
-#######################
-## locate fragment package
-######################
-sub locate{
-    my ($this, $java, $short_pack) = @_;
-    $java =~ s/\.java$//;
-    $java = "$java.java";
-
-    my $pack = $this->pack_with($short_pack);
-    my $pack_path = $this->path_to_pack($pack);
-    my $java_path = "$pack_path/$java";
-
-    return $java_path;
-}
-
-sub locate_both{
-    my ($this, $java, $short_pack) = @_;
-    my $located = $this->locate_verify($java);
-    if(!$located){
-        $located = $this->locate_verify($java, 'app');
-    }
-
-    return $located;
-}
-
-sub locate_verify{
-    my ($this, $java, $short_pack) = @_;
-
-    my $java_path = $this->locate($java, $short_pack);
-
-    if(!(-f $java_path)){
-        #print STDERR "$java_path not exists\n";
-        return undef;
-    }
-
-    return $java_path;
-}
-
 
 
 return 1;

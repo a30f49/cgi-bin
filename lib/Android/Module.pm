@@ -100,6 +100,8 @@ sub layout{
 #######################
 sub xml{
     my ($this, $xml) = @_;
+    $xml =~ s/\.xml$//;
+    $xml = "$xml.xml";
 
     my $layout = $this->layout;
     my $path = new Path($layout)->with($xml)->path;

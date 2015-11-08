@@ -11,6 +11,7 @@ use File::Spec;
 use Data::Dumper;
 
 use Android;
+use Android::Module;
 
 use Plugin::ActivityGenerator;
 use Plugin::ModuleContent;
@@ -30,70 +31,102 @@ if(! Android::is_android_one){
 
 sub usage{
     print "Usage:\n";
-    print "  addtest <fragment> -f\n";
-    print "  -f   ,force overwrite\n";
+    print "  addtest <fragment|activity> [target]\n";
+    print "     target     -- target module, default to 'app' \n";
 }
 
 if(@ARGV == 0){
-my $c= @ARGV;
     usage();
     exit(0);
 }
 
-my ($param_frag, $overwrite);
+my $overwrite = 0;
 
-if(Android::is_android_one){
-    ($param_frag, $overwrite) = @ARGV;
+my ($param_which, $param_target, $param_pack) = @ARGV;
+if(!$param_target){
+    $param_target = 'app';
+}
+if(!$param_pack){
+    $param_pack = 'test';
+}
 
-    if($overwrite){
-        if($overwrite ne '-f'){
-            $overwrite = undef;
-        }
-    }
-
-    if(!$param_frag){
-        usage;
-        exit(0);
-    }
+if(!$param_which){
+    usage;
+    exit(0);
 }
 
 &gen_test;
 
 sub gen_test{
-    my $target_mod = 'app';
-    my $target_pack = 'test';
     my $test = 1;
 
-    my $done = 0;
-
-
     ## get module pack
-    my $mc = new ModuleContent();
     my $mod = new Path()->basename;
-    $mc->module($mod);
+    my $mc_which = new ModuleContent($mod);
 
     ## from fragment package
-    my $fragment_path = $mc->locate($param_frag);
-    if(!(-f $fragment_path)){
-        $fragment_path = $mc->locate($param_frag, 'app');
+    my $which_path = $mc_which->locate_auto($param_which);
+    if(!(-f $which_path)){
+        print STDERR "fatal: $which_path not exists.\n";
+        return 0;
     }
-    if(!(-f $fragment_path)){
-        print STDERR "fatal: $fragment_path not exists.\n";
-    }
-    print "$fragment_path\n";
+    #print "$which_path\n";
 
-    ## gen activity java class
-    my $act = new ActivityGenerator($target_mod, $fragment_path);
-    if( $act->gen_act($fragment_path, $test, $overwrite)){
-        $done = 1;
+    ## check activity_unit_test exists
+    my $module  = new Module($param_target);
+    my $activity_test_path = $module->xml('activity_unit_test');
+    if(!(-f $activity_test_path)){
+        my $aut = new ModuleTarget($param_target);
+        $aut->copy_from_layout('plugin-template', 'activity_unit_test');
+    }
+
+    ## check fragment_unit_test exists
+    my $fragment_unit_test_tag = 'fragment_unit_test';
+    my $fragment_unit_test = $module->xml($fragment_unit_test_tag);
+    if(!(-f $fragment_unit_test)){
+        my $tp = new TemplateProvider();
+        my $root = $tp->template_root('template_test_container');
+
+        my $aut = new ModuleTarget($param_target, $fragment_unit_test_tag);
+        $aut->save($root->data);
+    }
+
+    ## check UnitTestActivity exists
+    my $mc_target = new ModuleContent($param_target);
+    my $activity_test_java_path = $mc_target->locate('UnitTestActivity');
+    if(!(-f $activity_test_java_path)){
+        print STDERR "fetal: UnitTestActivity.java not exists, please provide before continue\n";
+        return 0;
+    }
+
+    if($param_which=~/Fragment$/){
+        &gen_test_for_fragment($param_target, $param_which);
     }else{
-        $done = 0;
+        &gen_test_for_activity($param_target, $param_which);
+    }
+}
+
+sub gen_test_for_activity{
+    my ($which_path) = @_;
+
+    ## add to layout unit test
+    ##
+
+}
+
+
+sub gen_test_for_fragment{
+    my ($which_path, $target, $overwrite)= @_;
+    my $test = 1;
+
+## gen activity java class
+    my $act = new ActivityGenerator($target, $which_path);
+    if( !$act->gen_act($which_path, $test, $overwrite)){
+        print STDERR "fetal: fail to gen activity\n";
+        return;
     }
 
     ## append to xml
-    #my $raw = new FlowRaw('app');
-    #my $data = $raw->get_raw("fragment_unit_test.xml");
-    #print Dumper($data);
     my $layout = new FlowLayout('app', 'fragment_unit_test.xml');
     my $template = $layout->clone_first_child;
     if(!$template){
@@ -115,11 +148,8 @@ sub gen_test{
     my $mt = new ModuleTarget('app', 'fragment_unit_test.xml');
     $mt->save($stack->data);
 
-
     ### print result
     my $new_act = $act->new_activity;
-    if($done){
-        print " =>override $new_act\n";
-    }
-    print "Done...$param_frag => $new_act\n";
+    print " =>override $new_act\n";
+    print "Done...$param_which => $new_act\n";
 }

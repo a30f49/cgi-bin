@@ -30,6 +30,8 @@ sub new{
 ####################
 sub template_root{
     my ($this, $xml) = @_;
+    $xml =~ s/\.xml//;
+    $xml = "$xml.xml";
 
     my $mod = new Template()->module;
     my $layout = new FlowLayout($mod, $xml);
@@ -39,6 +41,8 @@ sub template_root{
 
 sub template_container{
     my ($this, $xml) = @_;
+    $xml =~ s/\.xml//;
+    $xml = "$xml.xml";
 
     my $t = new Template();
     my $template_xml = $t->get_xml($xml);

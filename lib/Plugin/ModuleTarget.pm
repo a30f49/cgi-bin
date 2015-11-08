@@ -4,14 +4,13 @@ package ModuleTarget;
 
     #Sample 1, save xml data to target layout
     my $mt = new ModuleTarget('app', 'fragment_new_user');
-
     my $from = new XML::Smart->new('template_sample');
     my $from = $xml->data;
     $mt->save($data);
 
     #Sample 2, copy layout to target module
     my $mt = new ModuleTarget('app');
-    $mt->copy_layout('template-app', 'activity_options.xml');
+    $mt->copy_from_layout('template-app', 'activity_options.xml');
 
     #Sample 3, copy class to target module, param: gen -- short package
     my $mt = new ModuleTarget('app', 'gen');
@@ -58,7 +57,7 @@ sub save{
 ###########################
 ## copy to target module #
 ######################
-sub copy_layout{
+sub copy_from_layout{
     my ($this, $mod, $from, $overwrite) = @_;
     $from =~ s/\.xml$//;
     $from = "$from.xml";
@@ -103,7 +102,7 @@ sub copy_from{
         mkdir $to_path;
     }
     my $to_java = $to_mc->locate($from, $to_short_pack);
-    #print "to_java: $to_java\n";
+    #print "(from,to_short_pack,to_java)=> ($from,$to_short_pack,$to_java)\n";
 
     ## from
     my $from_mc = new ModuleContent($mod);
