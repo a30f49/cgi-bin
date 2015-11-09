@@ -3,7 +3,9 @@ BEGIN {
     my $cwd = $0;
     $cwd =~ s/\/[\w-\.]+$//;
     push( @INC, "$cwd/lib");
+    require "$cwd/unittest.pl";
 }
+
 use strict;
 use warnings;
 use JSON;
@@ -76,8 +78,11 @@ sub gen_test{
     my $module  = new Module($param_target);
     my $activity_test_path = $module->xml('activity_unit_test');
     if(!(-f $activity_test_path)){
-        my $aut = new ModuleTarget($param_target);
-        $aut->copy_from_layout('plugin-template', 'activity_unit_test');
+        #my $aut = new ModuleTarget($param_target);
+        #$aut->copy_from_layout('plugin-template', 'activity_unit_test');
+        my $data = &activity_unit_test_data;
+        my $mc = new ModuleTarget($param_target, 'activity_unit_test');
+        $mc->save($data);
     }
 
     ## check fragment_unit_test exists
@@ -95,19 +100,25 @@ sub gen_test{
     my $mc_target = new ModuleContent($param_target);
     my $activity_test_java_path = $mc_target->locate('UnitTestActivity');
     if(!(-f $activity_test_java_path)){
-        print STDERR "fetal: UnitTestActivity.java not exists, please provide before continue\n";
-        return 0;
+        #print STDERR "fetal: UnitTestActivity.java not exists, please provide before continue\n";
+
+        my $data =  &unittest_activity_class;
+        my $w = new Writer($activity_test_java_path);
+        $w->write_new($data);
     }
 
     if($param_which=~/Fragment$/){
-        &gen_test_for_fragment($param_target, $param_which);
+        my $which_pack = $mc_which->pack_from_path($which_path);
+        &gen_test_for_fragment($which_pack, $param_target);
     }else{
-        &gen_test_for_activity($param_target, $param_which);
+        &gen_test_for_activity($which_path, $param_target);
     }
+
+    print "$param_which\n";
 }
 
 sub gen_test_for_activity{
-    my ($which_path) = @_;
+    my ($which_path, $target, $overwrite) = @_;
 
     ## add to layout unit test
     my $layout = new FlowLayout('demo', 'fragment_unit_test.xml');
@@ -116,72 +127,136 @@ sub gen_test_for_activity{
         my $tp = new TemplateProvider();
         $template = $tp->template_root('template_test_item.xml');
     }
+    #print Dumper($template->data);
 
     ## gen test item
-    my $act = $param_which;
-    $act =~ /([A-Z][a-z0-9]+)([A-Z][a-z0-9]+)*Activity/;
-    #print "(act, 1,2)=>($act, $1, $2)\n";
-    my $id = '@+id/action_';
-    $id = "$id$1";
-    if($2){
-        $id = $id."_".$2;
-    }
-    $id =~ tr/[A-Z]/[a-z]/;
-
-    my $raw_item = {};
-    $raw_item->{id} = $id;
-    $raw_item->{title} = $act;
-    #print Dumper($raw_item);
+    my $raw_item = pack_to_test_item($param_which);
 
     ## binding
     my $binding = new Binding();
     my $item_root = $binding->bind_test_item($raw_item, $template);
-    #print Dumper(new Tree($item_root)->tree);
+    #print Dumper($raw_item);
 
     my $stack = new FlowStack($layout->container);
     $stack->add_one($item_root);
     #print Dumper($stack->data);
 
-    my $mt = new ModuleTarget('demo', 'fragment_unit_test.xml');
+    my $mt = new ModuleTarget($target, 'fragment_unit_test.xml');
     $mt->save($stack->data);
 }
 
 
 sub gen_test_for_fragment{
-    my ($which_path, $target, $overwrite)= @_;
+    my ($pack, $target, $overwrite)= @_;
     my $test = 1;
 
-## gen activity java class
-    my $act = new ActivityGenerator($target, $which_path);
-    if( !$act->gen_act($which_path, $test, $overwrite)){
-        print STDERR "fetal: fail to gen activity\n";
-        return;
+    ## gen activity java class
+    #print $pack; return;
+    my $act_path = build_test_target($pack, $target);
+    if(!$overwrite && !(-f $act_path)){
+        my $act = new ActivityGenerator($target, 'test');
+        if( !$act->gen_act($pack, $test, $overwrite)){
+            print STDERR "fetal: fail to gen activity\n";
+            return;
+        }
     }
 
     ## append to xml
-    my $layout = new FlowLayout('app', 'fragment_unit_test.xml');
+    my $layout = new FlowLayout($target, 'fragment_unit_test.xml');
     my $template = $layout->clone_first_child;
     if(!$template){
         my $tp = new TemplateProvider();
         $template = $tp->template_root('template_test_item.xml');
     }
+    #print Dumper(new Tree($template)->tree);
 
     ## binding
-    my $binding = new Binding();   my $item = $act->gen_raw;
-    my $item_root = $binding->bind_test_item($item, $template);
+    my $raw_item = pack_to_test_item($pack);
+    my $binding = new Binding();
+    my $item_root = $binding->bind_test_item($raw_item, $template);
 
     #print Dumper(new Tree($item_root)->tree);
     my $stack = new FlowStack($layout->container);
     $stack->add_one($item_root);
 
-    #print "------------------------------------------------------\n";
-    #print $stack->data;
-
-    my $mt = new ModuleTarget('app', 'fragment_unit_test.xml');
+    my $mt = new ModuleTarget($target, 'fragment_unit_test.xml');
     $mt->save($stack->data);
-
-    ### print result
-    my $new_act = $act->new_activity;
-    print " =>override $new_act\n";
-    print "Done...$param_which => $new_act\n";
 }
+
+
+######################
+## build the test item hash via the package #
+######################
+sub pack_to_test_item{
+    my ($pack) = @_;
+    $pack =~ s/ForTest$//;
+    $pack =~ s/Fragment$//;
+    $pack =~ s/Activity$//;
+
+    ## get name only
+    $pack =~ /(\w+)$/;
+
+    my $act = $1;
+    print $act."\n";
+
+    $act =~ /([A-Z][a-z0-9]+)([A-Z][a-z0-9]+)*/;
+    #print "(act, 1,2)=>($act, $1, $2)\n";
+    my $id = '@+id/action_';
+    my $title = '@string/title_';
+
+    my $id_end = $1; if($2){$id_end = $id_end.'_'.$2;}
+    $id_end =~ tr/[A-Z]/[a-z]/;
+
+    $id = "$id$id_end";
+    $title = "$title$id_end";
+
+    my $raw_item = {};
+    $raw_item->{id} = $id;
+    $raw_item->{title} = $title;
+    #print Dumper($raw_item);
+
+    return $raw_item;
+}
+
+##############################
+## build the test target path via the package #
+#############################
+sub build_test_target{
+    my ($pack, $target) = @_;
+
+    if($pack !~ /^\w+$/){
+        $pack =~ /(\w+)$/;
+        $pack = $1;
+    }
+
+    $pack =~ s/Fragment/ActivityForTest/;
+
+    my $mc = new ModuleContent($target);
+    my $target_pack = $mc->pack_with('test');
+    $target_pack = $mc->pack_with($pack, $target_pack);
+
+    my $path = $mc->path_to_pack($target_pack);
+    $path = "$path.java";
+    return $path;
+}
+
+sub activity_unit_test_data{
+    my @list = <DATA>;
+
+    my $data  = join('',@list);
+
+    print $data;
+
+    return $data;
+}
+
+
+__DATA__
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
+    <include layout="@layout/toolbar"/>
+    <include layout="@layout/fragment_unit_test"/>
+</LinearLayout>

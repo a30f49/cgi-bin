@@ -44,7 +44,7 @@ sub activity_exists{
     my @acts = $this->activities;
 
     foreach(@acts){
-        my $name = $act->{'android:name'};
+        my $name = $_;
         if($act_name eq $name){
             return 1;
         }

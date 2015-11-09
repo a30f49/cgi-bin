@@ -23,6 +23,7 @@ sub new{
 sub root{
     my ($this) = @_;
     my $module_name = $this->{_module};
+
     my $gr = new GradleRoot();
     my $module_root = $gr->module_root($module_name);
 

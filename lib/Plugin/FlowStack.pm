@@ -129,7 +129,10 @@ sub add_one{
     my $item_tree = new Tree($item_root)->tree;
     my $item_key = $item_root->key;
 
-    my $container_tree = $this->container_tree;
+    ## container instead of container tree
+    #my $container_tree = $this->container_tree;
+    my $container_tree = $this->container;
+    my $has_child = $this->container->has_child;
 
     my $divider_tree = $this->divider_tree;
     my $divider_key = $this->divider_key;
@@ -137,15 +140,18 @@ sub add_one{
     my $divider_group_key = $this->divider_group_key;
     #print Dumper($container_tree);
 
-    if($group_start){
-        push (@{$container_tree->{$divider_group_key}}, $divider_group_tree);
-        push (@{$container_tree->{'/order'}}, $divider_group_key);
-    }else{
-        #print Dumper($container_tree);
-        push (@{$container_tree->{$divider_key}}, $divider_tree);
-        push (@{$container_tree->{'/order'}}, $divider_key);
+    if($has_child){
+        if($group_start){
+            push (@{$container_tree->{$divider_group_key}}, $divider_group_tree);
+            push (@{$container_tree->{'/order'}}, $divider_group_key);
+        }else{
+            #print Dumper($divider_key);
+            push (@{$container_tree->{$divider_key}}, $divider_tree);
+            push (@{$container_tree->{'/order'}}, $divider_key);
+        }
     }
 
+    #print Dumper($item_key);
     push(@{$container_tree->{$item_key}}, $item_tree);
     push (@{$container_tree->{'/order'}}, $item_key);
 

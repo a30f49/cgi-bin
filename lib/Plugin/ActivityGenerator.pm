@@ -34,7 +34,6 @@ sub new{
     my $self = {
         _target_module  => shift,
         _target_package => shift,
-        _new_activity => undef
     };
     bless $self, $class;
 
@@ -59,11 +58,6 @@ sub target_package{
         $this->{_target_package} = $pack;
     }
     return $this->{_target_package};
-}
-
-sub new_activity{
-    my ($this) = @_;
-    return $this->{_new_activity};
 }
 
 #####################
@@ -189,15 +183,14 @@ sub gen_act{
         #print "(target_path)=>($target_path)\n";
     }
 
-    ## add activity to manifest
-    my $activity_pack_relative = $target_act_long;
-    #print "(act_pack,manifest_pack)=>($target_act_long,$target_manifest_pack)\n";
-    $activity_pack_relative =~ s/$target_manifest_pack//;
-    #print "activity_pack_relative:$activity_pack_relative\n";
-    $this->{_new_activity} = $activity_pack_relative;
-
     ## manifest
     if($write_new){
+        ## add activity to manifest
+        my $activity_pack_relative = $target_act_long;
+        #print "(act_pack,manifest_pack)=>($target_act_long,$target_manifest_pack)\n";
+        $activity_pack_relative =~ s/$target_manifest_pack//;
+        #print "activity_pack_relative:$activity_pack_relative\n";
+
         my $target_module = $this->target_module;
         my $module = new Module($target_module);
         my $manifest_path = $module->manifest;

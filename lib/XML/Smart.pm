@@ -838,7 +838,7 @@ sub find_child_target{
         }
     }
 
-    print STDERR "ERROR:fail to find the child\n";
+    #print STDERR "ERROR:fail to find the child\n";
     return undef;
 }
 
@@ -868,12 +868,11 @@ sub first_node_array {
     my $this = shift ;
 
     my $first_child = $this;
-    #print "origin key:".$first_child->key;print "\n";
 
     my @nodes = $first_child->nodes_keys ;
     my $count = @nodes;
     if($count==0){
-        return $first_child;
+        return undef;
     }
 
     my $root = $nodes[0] ;

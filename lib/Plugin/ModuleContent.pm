@@ -55,7 +55,7 @@ sub pack{
 ## get package with a short package #
 #####################
 sub pack_with{
-    my ($this, $short_pack) = @_;
+    my ($this, $short_pack, $pack) = @_;
     if(!$short_pack){
         return $this->pack;
     }
@@ -63,7 +63,11 @@ sub pack_with{
        return $this->pack;
     }
 
-    my $pack = $this->pack;
+    if(!$pack){
+        $pack = $this->pack;
+    }
+
+    ## append with .
     if($short_pack !~ /^\./){
         $short_pack = ".$short_pack";
     }
@@ -94,6 +98,7 @@ sub packs_from_path{
     my $module = new Module($mod);
 
     my $cut = $module->src;
+
     my $pack = $path;
     $pack =~ s/$cut//;    ## cut path
 

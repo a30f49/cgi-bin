@@ -20,6 +20,16 @@ sub data{
     return $this->{_content};
 }
 
+sub package_value{
+    my ($this) = @_;
+
+    my $line = $this->package_line;
+    $line =~ /\w+\s+([\w\.]+)/;
+    $line = $1;
+
+    return $line;
+}
+
 sub package_line{
     my ($this) = @_;
 
@@ -79,10 +89,12 @@ sub _parse{
     foreach(@list){
 
         if(/$package_symbol/){
-            $this->{_package} = $_;
+            my $p = $_;
+            $this->{_package} = $p;
         }elsif(/$R_symbol/){
             if(/\.R/){
-                $this->{_R} = $_;
+                my $r = $_;
+                $this->{_R} = $r;
             }
         }
     }
