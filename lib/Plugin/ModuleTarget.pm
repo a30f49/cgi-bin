@@ -51,7 +51,7 @@ sub save{
     $target_xml = $module->xml($target_xml);
 
     my $w = new Writer();
-    $w->write_new($target_xml, $data);
+    return $w->write_new($target_xml, $data);
 }
 
 ###########################

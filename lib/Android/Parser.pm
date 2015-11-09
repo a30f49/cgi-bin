@@ -12,9 +12,6 @@ sub new{
 
 sub parse_package{
     my ($this, $pack) = @_;
-
-    print $pack;
-
     return $pack;
 }
 

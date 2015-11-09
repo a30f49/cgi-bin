@@ -110,8 +110,40 @@ sub gen_test_for_activity{
     my ($which_path) = @_;
 
     ## add to layout unit test
-    ##
+    my $layout = new FlowLayout('demo', 'fragment_unit_test.xml');
+    my $template = $layout->clone_first_child;
+    if(!$template){
+        my $tp = new TemplateProvider();
+        $template = $tp->template_root('template_test_item.xml');
+    }
 
+    ## gen test item
+    my $act = $param_which;
+    $act =~ /([A-Z][a-z0-9]+)([A-Z][a-z0-9]+)*Activity/;
+    #print "(act, 1,2)=>($act, $1, $2)\n";
+    my $id = '@+id/action_';
+    $id = "$id$1";
+    if($2){
+        $id = $id."_".$2;
+    }
+    $id =~ tr/[A-Z]/[a-z]/;
+
+    my $raw_item = {};
+    $raw_item->{id} = $id;
+    $raw_item->{title} = $act;
+    #print Dumper($raw_item);
+
+    ## binding
+    my $binding = new Binding();
+    my $item_root = $binding->bind_test_item($raw_item, $template);
+    #print Dumper(new Tree($item_root)->tree);
+
+    my $stack = new FlowStack($layout->container);
+    $stack->add_one($item_root);
+    #print Dumper($stack->data);
+
+    my $mt = new ModuleTarget('demo', 'fragment_unit_test.xml');
+    $mt->save($stack->data);
 }
 
 
