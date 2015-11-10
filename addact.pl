@@ -34,10 +34,10 @@ sub usage{
     print "        pack           -- the short pack to add to \n";
 }
 
-my ($param_frag, $param_target, $param_short_pack) = @ARGV;
+my ($param_which, $param_target, $param_pack) = @ARGV;
 my $local = (!$param_target);
 
-if($param_frag !~ /Fragment/){
+if($param_which !~ /Fragment/){
     print "fatal: not an Fragment to add.\n";
     exit(0);
 }
@@ -47,24 +47,24 @@ if($local){
 }
 
 ## get fragment package
-my $mc = new ModuleContent(new Path()->basename);
-my $path = $mc->locate_both($param_frag);
+my $mc = new ModuleContent($param_target);
+my $path = $mc->locate_auto($param_which);
 if(!$path){
     print STDERR "fetal: $path not exists\n";
     exit(0);
 }
 my $fragment_pack = $mc->pack_from_path($path);
 if($local){
-    $param_short_pack = $mc->pack_cut($fragment_pack);
+    $param_pack = $mc->pack_cut($fragment_pack);
+    $param_pack =~ s/\.\w+$//;
 }
 
 ## support
-my $act = new ActivityGenerator($param_target, $param_short_pack);
-#print $param_target.",".$param_short_pack."\n";
+my $act = new ActivityGenerator($param_target, $param_pack);
+#print $param_target.",".$param_pack."\n";
 if( $act->gen_act($fragment_pack)){
-    my $new_act = $act->new_activity;
-    print "Done...$param_frag=>$new_act\n";
+    print "Done...$param_which\n";
 }else{
-    print "Pass...$param_frag\n";
+    print "Pass...$param_which\n";
 }
 
