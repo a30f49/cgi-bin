@@ -59,6 +59,10 @@ if($local){
     $param_pack =~ s/\.\w+$//;
 }
 
+if($local){
+    $param_pack = 'gen';
+}
+
 ## support
 my $act = new ActivityGenerator($param_target, $param_pack);
 #print $param_target.",".$param_pack."\n";

@@ -197,7 +197,6 @@ sub pack_to_test_item{
     $pack =~ /(\w+)$/;
 
     my $act = $1;
-    print $act."\n";
 
     $act =~ /([A-Z][a-z0-9]+)([A-Z][a-z0-9]+)*/;
     #print "(act, 1,2)=>($act, $1, $2)\n";
