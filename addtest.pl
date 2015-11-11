@@ -23,6 +23,7 @@ use Plugin::FlowStack;
 use Plugin::Binding;
 use Plugin::ModuleTarget;
 use Plugin::TemplateProvider;
+use Plugin::Matches;
 
 #check android area
 my $android = new Android();
@@ -107,18 +108,18 @@ sub gen_test{
         $w->write_new($data);
     }
 
+    my $which_pack = $mc_which->pack_from_path($which_path);
     if($param_which=~/Fragment$/){
-        my $which_pack = $mc_which->pack_from_path($which_path);
         &gen_test_for_fragment($which_pack, $param_target);
     }else{
-        &gen_test_for_activity($which_path, $param_target);
+        &gen_test_for_activity($which_path, $which_pack, $param_target);
     }
 
     print "$param_which\n";
 }
 
 sub gen_test_for_activity{
-    my ($which_path, $target, $overwrite) = @_;
+    my ($which_path, $which_pack, $target, $overwrite) = @_;
 
     ## add to layout unit test
     my $layout = new FlowLayout('demo', 'fragment_unit_test.xml');
@@ -127,6 +128,7 @@ sub gen_test_for_activity{
         my $tp = new TemplateProvider();
         $template = $tp->template_root('template_test_item.xml');
     }
+    delete $template->{'xmlns:android'};
     #print Dumper($template->data);
 
     ## gen test item
@@ -143,6 +145,10 @@ sub gen_test_for_activity{
 
     my $mt = new ModuleTarget($target, 'fragment_unit_test.xml');
     $mt->save($stack->data);
+
+    ### add action to UnitTestActivity
+    my $action_id = match_which_to_action_id($param_which);
+    add_action_to_UnitTestActivity($action_id, $which_pack);
 }
 
 
@@ -247,6 +253,13 @@ sub activity_unit_test_data{
     print $data;
 
     return $data;
+}
+
+sub add_action_to_UnitTestActivity{
+    my ($this, $action_id, $which_pack) = @_;
+    print "(action_id, which_pack)=>($action_id, $which_pack)\n";
+
+
 }
 
 

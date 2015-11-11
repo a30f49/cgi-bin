@@ -7,47 +7,104 @@ sub new{
     my $class = shift;
     my $self = {
         _content => shift,
-        _package => undef,
-        _R => undef
+        _list => undef,
     };
     bless $self, $class;
+
+    my $data = $self->{_content};
+    my @list = split(/\n/, $data);
+    $self->{_list} = \@list;
+
     return $self;
 }
 
 sub data{
     my ($this) = @_;
-
     return $this->{_content};
 }
 
-sub package_value{
+sub list{
     my ($this) = @_;
+    my @list = @{$this->{_list}};
 
-    my $line = $this->package_line;
+    return @list;
+}
+
+sub package_line{
+    my ($this) = @_;
+    my @list = $this->list;
+
+    my $package_symbol = 'package ';
+    foreach(@list){
+        if(/$package_symbol/){
+            return $_;
+        }
+    }
+    return undef;
+}
+
+sub package_value{
+    my ($this, $package_line) = @_;
+    if(!$package_line){
+        $package_line = $this->package_line;
+    }
+
+    my $line = $package_line;
     $line =~ /\w+\s+([\w\.]+)/;
     $line = $1;
 
     return $line;
 }
 
-sub package_line{
-    my ($this) = @_;
+sub append_import_line{
+    my ($this, $line) = @_;
+    $line =~ s/^\s*//;
 
-    if(!$this->{_package}){
-        $this->_parse;
+    ## check 'import '
+    my $import_symbol = 'import ';
+    if($line !~ /$import_symbol/){
+        $line = $import_symbol.$line;
+    }
+    ## check ;
+    if($line !~ /\;$/){
+        $line = $line . ';';
     }
 
-    return $this->{_package};
+    ##TODO,
+
+}
+
+sub import_lines{
+    my ($this) = @_;
+
+    my @list = $this->list;
+
+    my @lines;
+
+    my $import_symbol = 'import ';
+    foreach(@list){
+        if(/$import_symbol/){
+            push(@lines, $_);
+        }
+    }
+
+    return @lines;
 }
 
 sub R_line{
     my ($this) = @_;
 
-    if(!$this->{_R}){
-        $this->_parse;
-    }
+    my @list = $this->list;
 
-    return $this->{_R};
+    my $R_symbol = 'import ';
+    foreach(@list){
+        if(/$R_symbol/){
+            if(/\.R/){
+                return $_;
+            }
+        }
+    }
+    return undef;
 }
 
 sub replace_R_with_package{
@@ -76,28 +133,6 @@ sub replace_R_with_package{
     return 0;
 }
 
-sub _parse{
-    my ($this) = @_;
 
-    my $data = $this->{_content};
-
-    my @list = split(/\n/, $data);
-
-    my $package_symbol = 'package ';
-    my $R_symbol = 'import ';
-
-    foreach(@list){
-
-        if(/$package_symbol/){
-            my $p = $_;
-            $this->{_package} = $p;
-        }elsif(/$R_symbol/){
-            if(/\.R/){
-                my $r = $_;
-                $this->{_R} = $r;
-            }
-        }
-    }
-}
 
 return 1;

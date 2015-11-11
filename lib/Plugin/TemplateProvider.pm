@@ -36,7 +36,10 @@ sub template_root{
     my $mod = new Template()->module;
     my $layout = new FlowLayout($mod, $xml);
 
-    return $layout->get_root;
+    my $root = $layout->get_root;
+    #delete $root->{'xmlns:android'};
+
+    return $root;
 }
 
 sub template_container{
