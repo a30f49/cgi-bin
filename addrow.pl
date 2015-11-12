@@ -30,7 +30,7 @@ if(! Android::is_android_one){
 
 sub usage{
     print "Usage:\n";
-    print "  addnew <model> <field,field2...> <type>\n";
+    print "  addrow <model> <field,field2...> <type>\n";
     print "    params\n";
     print "      model   -- the model name. e.g. user\n";
     print "      field   -- the field of the model. e.g. name\n";
