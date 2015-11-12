@@ -11,6 +11,19 @@ sub new{
     return $self;
 }
 
+sub split_package{
+    my $pack = shift;
+
+    ## split package with base pack and name
+    my ($p, $n);
+
+    $pack =~ /([\w\.]+)\.(\w+)$/;
+    $p = $1;
+    $n = $2;
+
+    return ($p, $n);
+}
+
 #############################
 ## match which[Fragment|Activity] name to action id #
 ###########################

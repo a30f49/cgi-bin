@@ -34,9 +34,8 @@ sub package_line{
     my ($this) = @_;
     my @list = $this->list;
 
-    my $package_symbol = 'package ';
     foreach(@list){
-        if(/$package_symbol/){
+        if(qr/^package /){
             return $_;
         }
     }
@@ -56,8 +55,41 @@ sub package_value{
     return $line;
 }
 
+sub import_lines{
+    my ($this) = @_;
+
+    my @list = $this->list;
+
+    my @lines;
+
+    foreach(@list){
+        if(qr/^import /){
+            push(@lines, $_);
+        }
+    }
+
+    return @lines;
+}
+
+sub import_line_R{
+    my ($this) = @_;
+
+    my @list = $this->list;
+
+    foreach(@list){
+        if(qr/^import /){
+            if(/\.R;/){
+                return $_;
+            }
+        }
+    }
+    return undef;
+}
+
 sub append_import_line{
     my ($this, $line) = @_;
+    if(!$line){return 0;}
+
     $line =~ s/^\s*//;
 
     ## check 'import '
@@ -70,43 +102,74 @@ sub append_import_line{
         $line = $line . ';';
     }
 
-    ##TODO,
+    my $pattern = qr/^import /;
+    my ($head, $tail, $imports) = $this->split_with($pattern);
 
+    push(@{$imports}, $line);
+
+    ## create new content
+    my @lines;
+    push(@lines, @{$head});
+    push(@lines, @{$imports});
+    push(@lines, @{$tail});
+
+    $this->{_list} = \@lines;
+    $this->{_content} = join("\n", @lines);
 }
 
-sub import_lines{
+sub remove_import_line_R{
     my ($this) = @_;
 
-    my @list = $this->list;
+    ## append import lines
+    my (@head,@tail,@imports) = $this->split_with(qr/^import /);
 
     my @lines;
-
-    my $import_symbol = 'import ';
-    foreach(@list){
-        if(/$import_symbol/){
-            push(@lines, $_);
+    foreach(@imports){
+        if(/\.R/){
+            ## just ignore
+        }else{
+            push(@lines,$_);
         }
     }
 
-    return @lines;
+    my @list;
+    ## create new content
+    push(@list, @head);
+    push(@list, @lines);
+    push(@list, @tail);
+
+    $this->{_list} = \@lines;
+    $this->{_content} = join("\n", @lines);
 }
 
-sub R_line{
-    my ($this) = @_;
+sub split_with{
+    my ($this, $pattern) = @_;
+
+    my (@head,@tail,@lines);
 
     my @list = $this->list;
+    my $pattern_flag =0;
 
-    my $R_symbol = 'import ';
     foreach(@list){
-        if(/$R_symbol/){
-            if(/\.R/){
-                return $_;
+        if(/$pattern/){
+            $pattern_flag = 1;
+            push(@lines, $_);
+        }else{
+            if($pattern_flag){
+                push(@tail, $_);
+            }else{
+                push(@head, $_);
             }
         }
     }
-    return undef;
+
+    return (\@head,\@tail,\@lines);
 }
 
+
+#####################
+## deprecated #
+#########################
 sub replace_R_with_package{
     my ($this, $pack) = @_;
 

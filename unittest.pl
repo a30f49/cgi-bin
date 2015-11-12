@@ -35,8 +35,6 @@ public class UnitTestActivity extends BaseBackActivity {
         wrapper.setTitle(R.string.title_activity_unit_test)
                 .backNavigation();
 
-        //actionFlow.registerActivity(R.id.action_desk_open, TestActivity.class);
-
         actionFlow.init(this, R.anim.next_in_right, R.anim.next_out_left);
     }
 }

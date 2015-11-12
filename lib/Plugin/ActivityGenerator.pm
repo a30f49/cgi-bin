@@ -28,17 +28,24 @@ use Android::Module;
 use Android::Manifest;
 
 use Plugin::ModuleContent;
+use Plugin::Matches;
 
 sub new{
     my $class = shift;
     my $self = {
         _target_module  => shift,
         _target_package => shift,
+        _new_activity => undef,
     };
     bless $self, $class;
 
     ## reset target package
     return $self;
+}
+
+sub new_activity{
+    my ($this) = @_;
+    return $this->{_new_activity};
 }
 
 sub target_module{
@@ -65,30 +72,33 @@ sub target_package{
 ## param: fragment - long fragment with full pack #
 #####################
 sub gen_act{
-    my ($this, $fragment, $test, $overwrite) = @_;
-
-    if(!$fragment){
-        print STDERR "ActivityGenerator: no fragment param.\n";
-        return;
+    my ($this, $which_pack, $test, $overwrite) = @_;
+    if(!$which_pack){
+        die "fetal: no fragment to be added.\n";
     }
 
-    my ($pack, $frag, $frag_prefix) = parse_fragment_pack($fragment);
-    #print "(fragment, pack,frag, prefix)=>($fragment, $pack, $frag, $frag_prefix)\n";
+    ## split fragment package
+    my ($which_pack_only, $which, $which_prefix);
+    ($which_pack_only , $which) = Matches::split_package($which_pack);
+    $which_prefix = $which;
+    $which_prefix =~ s/Fragment$//;
+    #print "(pack,frag, prefix)=>($pack, $which, $which_prefix)\n";
 
     ## activity target package
-    my $target_pack = $this->build_target_package;
-    #print "target_pack: $target_pack\n";
+    my $target_pack_only = $this->build_target_package;
+    #print "$target_pack_only: $target_pack_only\n";
 
     ## activity target name
-    my $target_act = $frag_prefix."Activity";
+    my $target_act = $which_prefix."Activity";
     if($test){
         $target_act = $target_act."ForTest";
     }
-    my $target_act_long = $target_pack."\.".$target_act;
-    #print "target activity: $target_act_long\n";
+    my $target_pack = $target_pack_only.'.'.$target_act;
+    #print "target pack: $target_pack\n";
+    $this->{_new_activity} = $target_pack;
 
     my $mc = new ModuleContent($this->target_module);
-    my $target_path = $mc->path_to_pack($target_act_long);
+    my $target_path = $mc->path_to_pack($target_pack);
     my $target_manifest_pack = $mc->pack;
     my $target_path_name = "$target_path.java";
     #print "target activity: $target_path_name\n";
@@ -100,7 +110,7 @@ sub gen_act{
     if(-f $act_src_path){
     }else{
         print STDERR "ActivityGenerator: template activity not exists\n";
-        return;
+        return 0;
     }
 
     ## init data
@@ -111,7 +121,7 @@ sub gen_act{
 
         my $title;
         {
-            my $ss = $frag_prefix;
+            my $ss = $which_prefix;
             $ss =~ /([A-Z][a-z0-9]+)([A-Z][a-z0-9]+)*$/;
             my $a1 = $1; my $a2 = $2;
             #print "(ss:a1:a2)=>($ss,$a1,$a2)\n";
@@ -125,7 +135,6 @@ sub gen_act{
 
         ## to title
         if($title){
-            my $target_pack = $this->target_package;
             my $title_line0 = "R.string.title_activity_template";
             my $title_line = "\"$title\"";
             if($title =~ /^R\.string\./){
@@ -136,19 +145,19 @@ sub gen_act{
 
         ## to target package
         my $pack_line0 = "package com.jfeat.plugin.template";
-        my $pack_line = "package $target_pack";
+        my $pack_line = "package $target_pack_only";
         $data =~ s/$pack_line0/$pack_line/;
 
         ## to new Fragment
         my $new_line0 = "new TemplateFragment";
-        my $new_line = "new $frag";
+        my $new_line = "new $which";
         $data =~ s/$new_line0/$new_line/;
 
         ## to target import
         my $import_line0 = "import com.jfeat.plugin.template.TemplateFragment;";
-        my $import_line = "import $pack.$frag;";
-        #print "(act_pack,pack)=>($target_pack,$pack)\n";
-        if($pack eq $target_pack){
+        my $import_line = "import $which_pack_only.$which;";
+        #print "(act_pack,pack)=>($target_pack_only,$pack)\n";
+        if($which_pack_only eq $target_pack_only){
             $import_line = undef;
         }
         $data =~ s/$import_line0/$import_line/;
@@ -157,7 +166,7 @@ sub gen_act{
         my $import_line_r0 = "import com.jfeat.plugin.template.R";
         my $import_line_r = "import $target_manifest_pack.R";
         $data =~ s/$import_line_r0/$import_line_r/;
-        $data =~ s/TemplateFragment/$frag/;
+        $data =~ s/TemplateFragment/$which/;
 
         ## to target class
         my $class_line0 = "class TemplateActivity";
@@ -171,23 +180,23 @@ sub gen_act{
     if($overwrite){
         $write_new = 1;
     }elsif(-f $target_path_name){
-        #print STDERR "Activity \"$target_path_name\" exists, passed.\n";
+        print STDERR "$target_path_name exists";
         $write_new = 0;
     }else{
         $write_new = 1;
     }
 
     if($write_new){
-        my $writer = new Writer();
-        $writer->write_new($target_path_name, $data);
+        my $writer = new Writer($target_path_name);
+        $writer->write_new($data);
         #print "(target_path)=>($target_path)\n";
     }
 
     ## manifest
     if($write_new){
-        ## add activity to manifest
-        my $activity_pack_relative = $target_act_long;
-        #print "(act_pack,manifest_pack)=>($target_act_long,$target_manifest_pack)\n";
+        my $activity_pack_relative = $target_pack;
+        #print "(act_pack,manifest_pack)=>(target_pack,$target_manifest_pack)\n";
+
         $activity_pack_relative =~ s/$target_manifest_pack//;
         #print "activity_pack_relative:$activity_pack_relative\n";
 
@@ -198,22 +207,6 @@ sub gen_act{
         $manifest->append_activity_with_name($activity_pack_relative);
         $manifest->save();
     }
-}
-
-sub parse_fragment_pack{
-    my $fragment = shift;
-
-    my ($fragment_pack, $fragment_name, $fragment_prefix);
-
-    $fragment =~ /([\w\.]+)\.(\w+)$/;
-    $fragment_pack = $1;
-    $fragment_name = $2;
-
-    $fragment_prefix = $fragment_name;
-    $fragment_prefix =~ s/Fragment$//;
-    #$fragment_prefix =~ tr/[A-Z]/[a-z]/;
-
-    return ($fragment_pack, $fragment_name, $fragment_prefix);
 }
 
 sub build_target_package{
@@ -234,37 +227,10 @@ sub build_target_package{
 
     if(-d $dir){
     }else{
-        print STDERR "ActivityGenerator: fail to mkdir - $dir\n";
+        die "fetal: fail to mkdir - $dir\n";
     }
 
     return $pack;
 }
-
-sub gen_raw{
-    my ($this) = @_;
-    my $act  = $this->new_activity;
-    $act =~ s/ForTest$//;
-    $act =~ /(\w+)$/;
-    $act = $1;
-
-    $act =~ /([A-Z][a-z0-9]+)([A-Z][a-z0-9]+)*Activity/;
-    #print "(act, 1,2)=>($act, $1, $2)\n";
-
-    my $id = '@+id/action_';
-    $id = "$id$1";
-    if($2){
-        $id = $id."_".$2;
-    }
-    $id =~ tr/[A-Z]/[a-z]/;
-
-    $act =~ s/Activity/Fragment/;
-
-    my $raw_item = {};
-    $raw_item->{id} = $id;
-    $raw_item->{title} = $act;
-
-    return $raw_item;
-}
-
 
 return 1;
