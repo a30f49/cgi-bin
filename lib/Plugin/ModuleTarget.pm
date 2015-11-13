@@ -1,9 +1,9 @@
 package ModuleTarget;
 =head1 USAGE
-    Save data to module specific xml
+    Save data or copy layout or java class to the specific module
 
     #Sample 1, save xml data to target layout
-    my $mt = new ModuleTarget('app', 'fragment_new_user');
+    my $mt = new ModuleTarget('app', 'fragment_new_user.xml');
     my $from = new XML::Smart->new('template_sample');
     my $from = $xml->data;
     $mt->save($data);
@@ -11,6 +11,9 @@ package ModuleTarget;
     #Sample 2, copy layout to target module
     my $mt = new ModuleTarget('app');
     $mt->copy_from_layout('template-app', 'activity_options.xml');
+
+    my $mt = new ModuleTarget('app', 'activity_demo.xml');
+    $mt->copy_from_layout('plugin-template', 'template_container.xml');
 
     #Sample 3, copy class to target module, param: gen -- short package
     my $mt = new ModuleTarget('app', 'gen');
@@ -47,6 +50,10 @@ sub save{
     my ($this, $data)  = @_;
 
     my $target_xml = $this->{_target};
+    if($target_xml !~ /\.xml$/){
+        die "fetal: $target_xml must with postfix .xml\n";
+    }
+
     my $module = new Module($this->{_module});
     $target_xml = $module->xml($target_xml);
 
@@ -63,12 +70,17 @@ sub copy_from_layout{
     $from = "$from.xml";
 
     ## to xml
+    my $to = $this->{_target};
+    if(!$to){
+        $to = $from;
+    }
     my $to_mod = new Module($this->{_module});
-    my $to_xml = $to_mod->xml($from);
+    my $to_xml = $to_mod->xml($to);
 
     ## from xml
     my $from_mod = new Module($mod);
     my $from_xml = $from_mod->xml($from);
+    print "(from,to,from_xml,to_xml)=>($from,$to,$from_xml,$to_xml)\n";
 
     if(!(-f $from_xml)){
         print STDERR "$from_xml not exists\n";

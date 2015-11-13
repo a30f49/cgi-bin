@@ -30,6 +30,22 @@ sub list{
     return @list;
 }
 
+sub class_name{
+    my ($this) = @_;
+
+    my @list = $this->list;
+
+    foreach(@list){
+        if(/class /){
+            my $line = $_;
+            $line =~ /class\s+(\w+)/;
+            $line = $1;
+            return $line;
+        }
+    }
+    return undef;
+}
+
 sub package_line{
     my ($this) = @_;
     my @list = $this->list;

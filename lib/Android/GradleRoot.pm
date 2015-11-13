@@ -4,6 +4,8 @@ use Path;
 
 use Android;
 
+use File::Reader;
+
 sub new{
     my $class = shift;
     my $self = {
@@ -45,14 +47,18 @@ sub modules{
     my $this = shift;
     my $root = $this->{_root};
 
-    ## get content from file
-    my $data;
-    {
-      local $/; #Enable 'slurp' mode
-      open my $fh, "<", "$root/settings.gradle";
-      $data = <$fh>;
-      close $fh;
+    my $path = "$root/settings.gradle";
+
+    my @lines;
+    my @list = new Reader($path)->list;
+    foreach(@list){
+        if(/^\/\//){
+        }else{
+            push(@lines, $_);
+        }
     }
+
+    my $data = join(' ', @lines);
 
     ## start to parse
     $data =~ s/include//g;

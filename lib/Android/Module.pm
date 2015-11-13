@@ -17,6 +17,11 @@ sub new{
     return $self;
 }
 
+sub name{
+    my ($this) = @_;
+    return $this->{_module};
+}
+
 ######################
 ## path to module root #
 #######################

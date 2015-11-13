@@ -2,54 +2,73 @@ package Template;
 use lib qw(lib);
 use Android::GradleRoot;
 use Android::Gradle;
-use XML::Smart;
+
+use Android::Module;
+our @ISA = qw(Module);
+
+use File::Dir;
 
 sub new{
     my $class = shift;
-    my $self = {
-        _module => 'plugin-template',
-        _gradle_obj => undef,
-    };
+    my $self = $class->SUPER::new( @_ );
 
     bless $self, $class;
+    return $self;
+}
 
-    my $module = $self->{_module};
-    my $module_root = new GradleRoot()->module_root($module);
+sub new{
+    my $class = shift;
 
-    $self->{_gradle_obj} = new Gradle($module_root);
+    my $self = $class->SUPER::new( 'plugin-template' );
+    bless $self, $class;
 
     return $self;
 }
 
-sub module{
+sub templates{
     my ($this) = @_;
-    return $this->{_module};
+
+    my $layout = $this->layout;
+    my $dir= new Dir($layout);
+    my @list = $dir->files;
+
+    return @list;
 }
 
-sub get_xml{
-    my ($this, $xml) = @_;
-    my $gradle = $this->{_gradle_obj};
+sub src{
+    my ($this, $which) = @_;
 
-    my $xml_relative = $gradle->xml($xml);
-    my $module_root = $gradle->module_root;
-
-    return new Path($module_root)->with($xml_relative)->path;
-}
-
-sub get_src{
-    my ($this, $src) = @_;
-    my $gradle = $this->{_gradle_obj};
-
-    my $module_root = $gradle->module_root;
-
+    my $module_root = $this->root;
+    my $src_path = this->src;
     my $pack_path = "com/jfeat/plugin/template";
-    my $src_path = $gradle->src;
 
-    my $r = new Path($module_root)->with($src_path)->with($pack_path)->with($src)->path;
+    my $r = new Path($module_root)->with($src_path)->with($pack_path)->with($which)->path;
     $r  =~ s/\.java$//;
     $r = $r.".java";
 
     return $r;
+}
+
+#######################
+## check layout or src exists #
+#########################
+sub is_exists{
+    my ($this, $which) = @_;
+
+    if($which =~ /\.java/){
+        my $path = $this->src($which);
+        if(-f $path){
+            return 1;
+        }
+
+    }else{
+        my $path = $this->xml($which);
+        if(-f $path){
+            return 1;
+        }
+    }
+
+    return 0;
 }
 
 return 1;

@@ -24,6 +24,8 @@ if($a){
        &usage;
     }elsif($a eq '-a'){
        &list_modules_of_android;
+    }else{
+        &usage;
     }
 }else{
    &list_modules;

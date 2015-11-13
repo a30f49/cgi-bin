@@ -11,6 +11,10 @@ sub new{
     return $self;
 }
 
+
+#########################
+## split package with base package and last segment package #
+########################
 sub split_package{
     my $pack = shift;
 

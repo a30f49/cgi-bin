@@ -20,13 +20,6 @@ sub new{
 ######################
 ## root path
 #######################
-sub root{
-    my $this = shift;
-    return $this->{_module_root};
-}
-######################
-## root path
-#######################
 sub module_root{
     my $this = shift;
     return $this->{_module_root};
