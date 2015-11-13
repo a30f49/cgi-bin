@@ -6,6 +6,10 @@ use strict;
 use warnings;
 use JSON;
 use utf8;
+
+use Plugin::Provider;
+our @ISA = qw(Provider);
+
 use Data::Dumper;
 
 use XML::Smart;
@@ -48,10 +52,12 @@ sub template_container{
     $xml = "$xml.xml";
 
     my $t = new Template();
-    my $template_xml = $t->get_xml($xml);
-    my $mod = $t->module;
+    my $xml_path = $t->xml($xml);
+    if(!(-f $xml_path)){
+        die "fetal: $xml not exists\n";
+    }
 
-    my $layout = new FlowLayout($mod, $template_xml);
+    my $layout = new FlowLayout($t->name, $xml);
     return $layout->get_container;
 }
 
@@ -60,7 +66,7 @@ sub divider_root{
 
     my $divider_xml = 'template_divider';
 
-    my $mod = new Template()->module;
+    my $mod = new Template()->root;
     my $layout = new FlowLayout($mod, $divider_xml);
 
     return $layout->get_root($divider_xml);
@@ -70,7 +76,7 @@ sub divider_group_root{
     my ($this) = @_;
     my $divider_group_xml = 'template_divider_group';
 
-    my $mod = new Template()->module;
+    my $mod = new Template()->root;
     my $layout = new FlowLayout($mod, $divider_group_xml);
 
     return $layout->get_root($divider_group_xml);

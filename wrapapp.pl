@@ -9,6 +9,7 @@ use warnings;
 use JSON;
 
 use Data::Dumper;
+use File::Writer;
 
 use Android;
 use Android::Template;
@@ -17,6 +18,7 @@ use Android::Module;
 use Plugin::ModuleContent;
 use Plugin::ModuleTarget;
 use Plugin::FlowLayout;
+use Plugin::TemplateProvider;
 use Plugin::Tree;
 
 use Plugins::PluginFragmentActivity;
@@ -98,10 +100,22 @@ if(!(-f $layout_path)){
 }
 
 ## if layout already exists, replace container from template
-print "Pass...$layout.xml already exists\n";
+#print "Pass...$layout.xml already exists\n";
 {
-    my $fl = new FlowLayout($module->name, $layout);
-    #print Dumper(new Tree($fl->container)->tree);
+    my $provider = new FlowLayout($module->name, $layout);
+    my $children_root = $provider->container;
+    if(!$children_root){
+        $children_root = $provider->get_root;
+    }
 
+    my $tp = new TemplateProvider();
+    my $container = $tp->template_container($which_template);
+    $provider->add_children($container, $children_root);
 
+    ## write to target
+    my $w = new Writer($layout_path);
+    $w->write_new($container->data);
+
+    #print Dumper($container->data);
+    print "Done...$layout.xml\n";
 }

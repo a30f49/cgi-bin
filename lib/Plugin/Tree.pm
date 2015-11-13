@@ -39,6 +39,12 @@ sub tree{
     my $root_tree = $child_item->tree;
 
     my $child_path = $child_item->path;
+    my $child_index = 0;
+    if($child_path =~ /\[(\w+)\]/){
+        $child_index = $1;
+
+        $child_path =~ s/\[(\w+)\]$//;
+    }
 
     my $path = new Path($child_path);
 
@@ -48,7 +54,7 @@ sub tree{
         if(!$cut){
             my $ref = ref $root_tree;
             if($ref eq "ARRAY"){
-                my $root_tree = @{$root_tree}[0];
+                my $root_tree = @{$root_tree}[$child_index];
                 #print Dumper($root_tree);
                 return $root_tree;
             }
