@@ -31,7 +31,7 @@ if(! Android::is_android_one){
 
 sub usage{
     print "Usage:\n";
-    print "  wrapapp <which> <template>\n";
+    print "  stackapp <which> <template> \n";
 }
 
 my ($which, $which_template) = @ARGV;
