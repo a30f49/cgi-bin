@@ -109,8 +109,7 @@ sub gen_act{
     #print "template activity:\n$act_src_path\n";
     if(-f $act_src_path){
     }else{
-        print STDERR "ActivityGenerator: template activity not exists\n";
-        return 0;
+        die "fetal: TemplateActivity.java not exists\n";
     }
 
     ## init data

@@ -66,7 +66,7 @@ sub divider_root{
 
     my $divider_xml = 'template_divider';
 
-    my $mod = new Template()->root;
+    my $mod = new Template()->module;
     my $layout = new FlowLayout($mod, $divider_xml);
 
     return $layout->get_root($divider_xml);
@@ -76,7 +76,7 @@ sub divider_group_root{
     my ($this) = @_;
     my $divider_group_xml = 'template_divider_group';
 
-    my $mod = new Template()->root;
+    my $mod = new Template()->module;
     my $layout = new FlowLayout($mod, $divider_group_xml);
 
     return $layout->get_root($divider_group_xml);

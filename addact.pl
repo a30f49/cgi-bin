@@ -4,6 +4,11 @@ BEGIN {
     $cwd =~ s/\/[\w-\.]+$//;
     push( @INC, "$cwd/lib");
 }
+=head1
+    add activity for fragment
+    default to local module
+=cut
+
 use strict;
 use warnings;
 use JSON;
@@ -27,9 +32,9 @@ if(@ARGV==0){
 
 sub usage{
     print "Usage:\n";
-    print "  addact <fragment> <target> <pack>  -- add activity at local module\n";
+    print "  addact <fragment> [target] [pack]  -- add activity to target module\n";
     print "     params:\n";
-    print "        fragment       -- the fragment to be add\n";
+    print "        fragment       -- the fragment to be add, default local module\n";
     print "        target         -- the target module to add to\n";
     print "        pack           -- the short pack to add to \n";
 }

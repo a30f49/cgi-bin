@@ -25,6 +25,11 @@ sub new{
     return $self;
 }
 
+sub module{
+    my $this = shift;
+    return 'plugin-template';
+}
+
 sub templates{
     my ($this) = @_;
 
@@ -35,14 +40,14 @@ sub templates{
     return @list;
 }
 
-sub src{
+sub get_src{
     my ($this, $which) = @_;
 
     my $module_root = $this->root;
-    my $src_path = this->src;
+    my $src_path = $this->src;
     my $pack_path = "com/jfeat/plugin/template";
 
-    my $r = new Path($module_root)->with($src_path)->with($pack_path)->with($which)->path;
+    my $r = new Path($src_path)->with($pack_path)->with($which)->path;
     $r  =~ s/\.java$//;
     $r = $r.".java";
 

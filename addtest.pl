@@ -139,6 +139,7 @@ sub gen_test{
         print "Done with adding layout item.\n";
     }
 
+
     ## append action to java UnitTestActivity
     &append_action_flow_to_java($which_pack, $param_target);
     print "$param_which\n";
@@ -173,6 +174,7 @@ sub append_to_layout{
     }
     delete $template->{'xmlns:android'};
     #print Dumper($template->data);
+
 
     ## gen test item
     my $raw_item = pack_to_test_item($which_pack);
