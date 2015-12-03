@@ -35,12 +35,13 @@ sub usage{
 }
 
 my ($which, $which_template) = @ARGV;
-my $which_path;
-
 if(!$which){
     usage;
     exit(0);
-}else{
+}
+
+my $which_path;
+{
     #check exists
     my $mod = new Path()->basename;
     my $mc = new ModuleContent($mod);
@@ -57,20 +58,59 @@ if(!$which){
 }
 
 if(!$which_template){
+    &show_templates_of_item;
+    exit(0);
+}
+
+sub show_templates_of_item{
     ## show all container template
     my $template = new Template();
     my @templates = $template->templates;
-    foreach(@templates){
-        if(/_container/){
-            print ' -> ';
-            print;
-            print "\n";
+
+    my $hash = build_template_hash(\@templates);
+    #print Dumper($hash);
+
+    my $i = 1;
+    foreach(keys %{$hash}){
+        my $key = "#$i";
+        print $key."\t";
+        print $hash->{$key};
+        print "\n";
+        $i++;
+    }
+}
+
+sub build_template_hash{
+    my $t = shift;
+    my @list = @{$t};
+
+    my $hash = {};
+
+    my $index = 1;
+    foreach(@list){
+        if(/item/){
+            my $key = "#$index";
+            $hash->{$key} = $_;
+
+            $index++;
         }
     }
 
-    exit(0);
-}else{
-    ## check exists
+    return $hash;
+}
+
+## check which template exists
+{
+    if($which_template =~ /^[0-9]+$/){
+        my $template = new Template();
+        my @templates = $template->templates;
+
+        my $hash = build_template_hash(\@templates);
+
+        my $key = "#$which_template";
+        $which_template = $hash->{$key};
+    }
+
     my $template = new Template();
     if(!$template->is_exists($which_template)){
         print STDERR "fetal: $which_template not exists\n";
@@ -99,9 +139,10 @@ if(!(-f $layout_path)){
     exit(0);
 }
 
-## if layout already exists, replace container from template
-#print "Pass...$layout.xml already exists\n";
-{
+&add_item;
+
+## add item into layout
+sub add_item{
     my $provider = new FlowLayout($module->name, $layout);
     my $children_root = $provider->container;
     if(!$children_root){
@@ -110,7 +151,11 @@ if(!(-f $layout_path)){
 
     my $tp = new TemplateProvider();
     my $container = $tp->template_container($which_template);
+    print Dumper($container);
+    return;
+
     $provider->add_children($container, $children_root);
+
 
     ## write to target
     my $w = new Writer($layout_path);

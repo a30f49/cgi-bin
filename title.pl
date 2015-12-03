@@ -24,8 +24,7 @@ if(! Android::is_android_root){
 
 sub usage{
     print "Usage:\n";
-    print "  modch -n <app-name>\n";
-    print "     option: -n       #change app name\n";
+    print "  title <app-name>\n";
 }
 
 if(@ARGV==0){
@@ -33,22 +32,11 @@ if(@ARGV==0){
     exit(0);
 }
 
-my $op;
-
-while(@ARGV){
-   $op = shift @ARGV;
-   #print "$op\n";
-   
-   if($op eq '-n'){
-       my $title = shift @ARGV;
-       if($title){
-           &change_app_title($title);
-       }else{
-          usage;
-       }
-   }else{
-      usage;
-   }
+my $title = shift @ARGV;
+if($title){
+   &change_app_title($title);
+}else{
+  usage;
 }
 
 

@@ -27,10 +27,9 @@ if(! Android::is_android_root){
 
 sub usage{
     print "Usage:\n";
-    print "  template <action>\n";
+    print "  template <action> [options]\n";
     print "     action --list  <options> -- list the templates\n";
     print "            --show  <which>   -- show which template\n";
-    print "            --apply <which> <target>  -- apply container to target: fragment|activity\n\n";
     print "     options c        -- of container templates\n";
     print "             i        -- of item templates\n";
 }
@@ -67,49 +66,9 @@ if($action eq '--list'){
     }
 
     &show_template($xml);
-
-}elsif($action eq '--apply'){
-    if(! Android::is_android_one){
-        print STDERR "fatal: Not an android module.\n";
-        exit(0);
-    }
-
-    my ($which, $app) = @ARGV;
-
-    if(!$which){
-        usage;
-        exit(0);
-    }
-
-    ## check which exists
-    my $t = new Template();
-    if(!$t->is_exists($which)){
-        print STDERR "fetal: $which not exists\n";
-        exit(0);
-    }
-    if(!$app){
-        usage;
-        exit(0);
-    }
-
-    ## check target app exists
-    my $target = new Path()->basename;
-    my $mc = new ModuleContent($target);
-    my $app_path = $mc->locate_auto($app);
-    if(!(-f $app_path)){
-         print STDERR "fetal: $app not exists\n";
-         exit(0);
-    }
-
-    &apply_template($which, $target, $app)
 }else{
     usage;
     exit(0);
-}
-
-sub apply_template{
-    my ($which, $target, $app) = @_;
-    #print "(which, target, app)=>($which, $target, $app)\n";
 }
 
 sub list_all_layouts{

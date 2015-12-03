@@ -3,7 +3,7 @@ BEGIN {
     my $cwd = $0;
     $cwd =~ s/\/[\w-\.]+$//;
     push( @INC, "$cwd/lib");
-    require "$cwd/unittest.pl";
+    require "$cwd/addtest_unittest.pl";
 }
 
 use strict;
