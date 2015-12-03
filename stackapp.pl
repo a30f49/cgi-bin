@@ -127,15 +127,7 @@ my $module = new Module(new Path()->basename);
 my $layout_path = $module->xml($layout);
 
 if(!(-f $layout_path)){
-    ## just copy template layout
-    $layout =~ s/\.xml//;
-    $layout = $layout.'.xml';
-
-    my $mod = new Path()->basename;
-    my $mt = new ModuleTarget($mod, $layout);
-    $mt->copy_from_layout(new Template()->name, $which_template);
-    print "Done...$layout\n";
-
+    print STDERR "app layout not exists:$layout_path\n";
     exit(0);
 }
 
@@ -150,17 +142,13 @@ sub add_item{
     }
 
     my $tp = new TemplateProvider();
-    my $container = $tp->template_container($which_template);
-    print Dumper($container);
-    return;
+    my $item_root = $tp->template_root($which_template);
 
-    $provider->add_children($container, $children_root);
-
+    $provider->add_child($item_root);
 
     ## write to target
     my $w = new Writer($layout_path);
-    $w->write_new($container->data);
+    $w->write_new($children_root->data);
 
-    #print Dumper($container->data);
     print "Done...$layout.xml\n";
 }

@@ -1,4 +1,11 @@
 package PluginFragmentActivity;
+=head1
+    get fragment/activity layout from java content
+
+    my $data = new Reader($which_path)->data;
+    my $layout = new PluginFragmentActivity($data)->layout;
+
+=cut
 use lib qw(lib);
 use strict;
 use warnings;
