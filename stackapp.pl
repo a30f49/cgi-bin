@@ -31,10 +31,10 @@ if(! Android::is_android_one){
 
 sub usage{
     print "Usage:\n";
-    print "  stackapp <which> <template> \n";
+    print "  stackapp <which> <template|LINE|DIVIDER|GROUP> \n";
 }
 
-my ($which, $which_template) = @ARGV;
+my ($which, $which_template, $height) = @ARGV;
 if(!$which){
     usage;
     exit(0);
@@ -62,6 +62,67 @@ if(!$which_template){
     exit(0);
 }
 
+
+## get app layout
+my $data = new Reader($which_path)->data;
+my $layout = new PluginFragmentActivity($data)->layout;
+
+my $module = new Module(new Path()->basename);
+my $layout_path = $module->xml($layout);
+if(!(-f $layout_path)){
+    print STDERR "app layout not exists:$layout_path\n";
+    exit(0);
+}
+
+my $provider = new FlowLayout($module->name, $layout);
+my $children_root = $provider->container;
+## ensure to get its container
+if(!$children_root){
+    $children_root = $provider->get_root;
+}
+
+
+if($which_template=~/^LINE$/){
+    $provider->add_line($height);
+
+}elsif($which_template=~/^DIVIDER$/){
+    ##TODO,
+}elsif($which_template=~/^GROUP/){
+    ##TODO,
+}
+else{
+    ## check which template exists
+    if($which_template =~ /^[0-9]+$/){
+        my $template = new Template();
+        my @templates = $template->templates;
+
+        my $hash = build_template_hash(\@templates);
+
+        my $key = "#$which_template";
+        $which_template = $hash->{$key};
+    }
+
+    my $template = new Template();
+    if(!$template->is_exists($which_template)){
+        print STDERR "fetal: $which_template not exists\n";
+        exit(0);
+    }
+
+    my $tp = new TemplateProvider();
+    my $item_root = $tp->template_root($which_template);
+
+    $provider->add_child($item_root);
+}
+
+## write to target
+{
+    my $w = new Writer($layout_path);
+    $w->write_new($children_root->data);
+
+    print "Done...$layout.xml\n";
+}
+
+
 sub show_templates_of_item{
     ## show all container template
     my $template = new Template();
@@ -88,7 +149,7 @@ sub build_template_hash{
 
     my $index = 1;
     foreach(@list){
-        if(/item/){
+        if(/_item/){
             my $key = "#$index";
             $hash->{$key} = $_;
 
@@ -97,58 +158,4 @@ sub build_template_hash{
     }
 
     return $hash;
-}
-
-## check which template exists
-{
-    if($which_template =~ /^[0-9]+$/){
-        my $template = new Template();
-        my @templates = $template->templates;
-
-        my $hash = build_template_hash(\@templates);
-
-        my $key = "#$which_template";
-        $which_template = $hash->{$key};
-    }
-
-    my $template = new Template();
-    if(!$template->is_exists($which_template)){
-        print STDERR "fetal: $which_template not exists\n";
-        exit(0);
-    }
-}
-
-
-## get app layout
-my $data = new Reader($which_path)->data;
-my $layout = new PluginFragmentActivity($data)->layout;
-
-my $module = new Module(new Path()->basename);
-my $layout_path = $module->xml($layout);
-
-if(!(-f $layout_path)){
-    print STDERR "app layout not exists:$layout_path\n";
-    exit(0);
-}
-
-&add_item;
-
-## add item into layout
-sub add_item{
-    my $provider = new FlowLayout($module->name, $layout);
-    my $children_root = $provider->container;
-    if(!$children_root){
-        $children_root = $provider->get_root;
-    }
-
-    my $tp = new TemplateProvider();
-    my $item_root = $tp->template_root($which_template);
-
-    $provider->add_child($item_root);
-
-    ## write to target
-    my $w = new Writer($layout_path);
-    $w->write_new($children_root->data);
-
-    print "Done...$layout.xml\n";
 }

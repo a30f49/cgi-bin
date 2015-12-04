@@ -35,13 +35,15 @@ sub new{
 sub template_root{
     my ($this, $xml) = @_;
     $xml =~ s/\.xml//;
-    $xml = "$xml.xml";
+    #$xml = "$xml.xml";
 
     my $mod = new Template()->module;
     my $layout = new FlowLayout($mod, $xml);
-
     my $root = $layout->get_root;
-    #delete $root->{'xmlns:android'};
+
+    #if(exists $root->{'xmlns:android'}){
+    #   delete $root->{'xmlns:android'};
+    #}
 
     return $root;
 }
@@ -49,15 +51,15 @@ sub template_root{
 sub template_container{
     my ($this, $xml) = @_;
     $xml =~ s/\.xml//;
-    $xml = "$xml.xml";
+    #$xml = "$xml.xml";
 
-    my $t = new Template();
-    my $xml_path = $t->xml($xml);
-    if(!(-f $xml_path)){
-        die "fetal: $xml not exists\n";
-    }
+    my $mod = new Template()->module;
+    #my $xml_path = $t->xml($xml);
+    #if(!(-f $xml_path)){
+    #    die "fetal: $xml not exists\n";
+    #}
 
-    my $layout = new FlowLayout($t->name, $xml);
+    my $layout = new FlowLayout($mod, $xml);
     return $layout->get_container;
 }
 
@@ -65,21 +67,47 @@ sub divider_root{
     my ($this) = @_;
 
     my $divider_xml = 'template_divider';
+    my $root = $this->template_root($divider_xml);
 
-    my $mod = new Template()->module;
-    my $layout = new FlowLayout($mod, $divider_xml);
+    if(exists $root->{'xmlns:android'}){
+       delete $root->{'xmlns:android'};
+    }
 
-    return $layout->get_root($divider_xml);
+    return $root;
 }
 
 sub divider_group_root{
     my ($this) = @_;
     my $divider_group_xml = 'template_divider_group';
+    my $root = $this->template_root($divider_group_xml);
 
-    my $mod = new Template()->module;
-    my $layout = new FlowLayout($mod, $divider_group_xml);
+    if(exists $root->{'xmlns:android'}){
+       delete $root->{'xmlns:android'};
+    }
 
-    return $layout->get_root($divider_group_xml);
+    return $root;
+}
+
+sub line_root{
+    my ($this, $height) = @_;
+    my $divider_group_xml = 'template_line';
+    my $root = $this->template_root($divider_group_xml);
+
+    if(exists $root->{'xmlns:android'}){
+       delete $root->{'xmlns:android'};
+    }
+
+    if($height){
+        if($height=~/^0\.5$/){
+            $height = $height.'dp';
+        }
+        if($height =~ /^[0-9]+$/){
+            $height = $height.'dp';
+        }
+        $root->{'android:layout_height'} = $height;
+    }
+
+    return $root;
 }
 
 

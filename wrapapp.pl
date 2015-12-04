@@ -35,12 +35,14 @@ sub usage{
 }
 
 my ($which, $which_template) = @ARGV;
-my $which_path;
 
 if(!$which){
     usage;
     exit(0);
-}else{
+}
+
+my $which_path;
+{
     #check exists
     my $mod = new Path()->basename;
     my $mc = new ModuleContent($mod);
@@ -57,19 +59,22 @@ if(!$which){
 }
 
 if(!$which_template){
-    ## show all container template
-    my $template = new Template();
-    my @templates = $template->templates;
-    foreach(@templates){
-        if(/_container/){
-            print ' -> ';
-            print;
-            print "\n";
-        }
+    &show_templates_of_container;
+    exit(0);
+}
+
+{
+    ## check which template exists
+    if($which_template =~ /^[0-9]+$/){
+        my $template = new Template();
+        my @templates = $template->templates;
+
+        my $hash = build_template_hash(\@templates);
+
+        my $key = "#$which_template";
+        $which_template = $hash->{$key};
     }
 
-    exit(0);
-}else{
     ## check exists
     my $template = new Template();
     if(!$template->is_exists($which_template)){
@@ -118,4 +123,42 @@ if(!(-f $layout_path)){
 
     #print Dumper($container->data);
     print "Done...$layout.xml\n";
+}
+
+
+sub show_templates_of_container{
+    ## show all container template
+    my $template = new Template();
+    my @templates = $template->templates;
+
+    my $hash = build_template_hash(\@templates);
+    #print Dumper($hash);
+
+    my $i = 1;
+    foreach(keys %{$hash}){
+        my $key = "#$i";
+        print $key."\t";
+        print $hash->{$key};
+        print "\n";
+        $i++;
+    }
+}
+
+sub build_template_hash{
+    my $t = shift;
+    my @list = @{$t};
+
+    my $hash = {};
+
+    my $index = 1;
+    foreach(@list){
+        if(/_container/){
+            my $key = "#$index";
+            $hash->{$key} = $_;
+
+            $index++;
+        }
+    }
+
+    return $hash;
 }
